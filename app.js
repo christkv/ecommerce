@@ -8,6 +8,7 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
+var MongoClient = require('mongodb').MongoClient;
 
 var app = express();
 
@@ -28,9 +29,17 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
-app.get('/users', user.list);
+// Connect to MongoDB
+MongoClient.connect("mongodb://localhost:27017/ecommerce", function(err, db) {
+	if(err) throw err;
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+	// Map up all the routes
+	app.get('/', routes.index(db));
+	// app.get('/users', user.list(db));
+
+	// Start http server
+	http.createServer(app).listen(app.get('port'), function(){
+	  console.log('Express server listening on port ' + app.get('port'));
+	});
 });
+

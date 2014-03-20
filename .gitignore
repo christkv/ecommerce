@@ -6,10 +6,12 @@ lib-cov
 *.out
 *.pid
 *.gz
+aws-config.json
 
 pids
 logs
 results
+db
 
 npm-debug.log
 node_modules
