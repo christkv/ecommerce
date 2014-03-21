@@ -8,8 +8,9 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
+// Get the MongoClient class
 var MongoClient = require('mongodb').MongoClient;
-
+// Application instance
 var app = express();
 
 // all environments
@@ -29,17 +30,31 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+var intitalizeTypes = function(types, callback) {
+  if(types.length == 0) return callback(null, null);
+  types.shift().init(function(err) {
+    if(err) return callback(err);
+    intitalizeTypes(types, callback);
+  });
+}
+
 // Connect to MongoDB
 MongoClient.connect("mongodb://localhost:27017/ecommerce", function(err, db) {
 	if(err) throw err;
 
 	// Map up all the routes
-	app.get('/', routes.index(db));
+	app.get('/', routes.index);
 	// app.get('/users', user.list(db));
 
-	// Start http server
-	http.createServer(app).listen(app.get('port'), function(){
-	  console.log('Express server listening on port ' + app.get('port'));
-	});
+  // Call init on all the types (setting up indexes etc)
+  intitalizeTypes([
+      require('./models/product')(db)
+  ], function(err) {
+    if(err) throw err;
+    // Start http server
+    http.createServer(app).listen(app.get('port'), function(){
+      console.log('Express server listening on port ' + app.get('port'));
+    });
+  });
 });
 

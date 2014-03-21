@@ -1,10 +1,12 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  div(class='container')
+    each product, index in products
+      if index % 3 == 0
+        div(class='row')
 
-  div(class='row')
-    div(class='col-md-4') col-md-4
-    div(class='col-md-4')="col-md-4"
-    div(class='col-md-4')="col-md-4"
+      div(class='col-md-4')
+        img(src=product.images.medium.url)
+        div(class='caption')
+          h3 #{product.title}

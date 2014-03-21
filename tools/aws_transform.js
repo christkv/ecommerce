@@ -17,11 +17,26 @@ var convertImages = function(item, obj) {
 }
 
 //
+// Transform list price
+var convertListPrice = function(obj, name, value) {
+	if(name.toLowerCase == 'listprice') {
+		obj.price = parseInt(value.Amount[0], 10);
+		obj.currency = value.CurrencyCode[0];
+	}
+}
+
+//
 // Convert the items form the data
 var convertItems = function(category, object, objects) {
 	var parseToInt = ["NumberOfItems", "NumberOfPages"];
-	var parseToDate = ["PublicationDate", "ReleaseDate"];
-	var ignoreFields = ["EANList", "ItemDimensions", "Languages", "Creator"];
+	var parseToDate = ["PublicationDate", "ReleaseDate", "publicationdate", "releasedate"];
+	var ignoreFields = ["eanlist"
+		, "itemdimensions"
+		, "languages"
+		, "creator"
+		, "packagedimensions"
+		, "listprice"
+		, "tradeinvalue"];
 
 	object.ItemSearchResponse.Items.forEach(function(item) {
 		item.Item.forEach(function(i) {
@@ -38,7 +53,10 @@ var convertItems = function(category, object, objects) {
 			// Get all the attributes
 			i.ItemAttributes.forEach(function(attr) {
 				for(var name in attr) {
-					if(ignoreFields.indexOf(name) != -1) return;
+					convertListPrice(obj, name, attr[name]);
+
+					// console.log("++++++++++++++++++++ " + name)
+					if(ignoreFields.indexOf(name.toLowerCase()) != -1) continue;
 					// obj[name] = attr[name];
 					if(Array.isArray(attr[name]) && attr[name].length == 1) {
 						obj[name.toLowerCase()] = attr[name][0];
@@ -57,7 +75,9 @@ var convertItems = function(category, object, objects) {
 				}
 			});
 
-			console.dir(i)
+			// console.dir(i)
+			// console.dir(obj)
+			// process.exit(0)
 
 			// Add category from keyword
 			obj.category = category;
