@@ -6,6 +6,7 @@ lib-cov
 *.out
 *.pid
 *.gz
+.DS_Store
 aws-config.json
 
 pids
