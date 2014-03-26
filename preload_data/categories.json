@@ -3,72 +3,98 @@
     "name": "/",
     "text": "/",
     "parent": "",
-    "category": "/"
+    "category": "/",
+    "children": [
+      "books",
+      "games"
+    ]
   },
   {
     "name": "books",
     "text": "Books",
     "parent": "/",
-    "category": "/books"
+    "category": "/books",
+    "children": [
+      "business",
+      "history",
+      "programming",
+      "cooking"
+    ]    
   },
   {
     "name": "business",
     "text": "Business",
     "parent": "/books",
-    "category": "/books/business"
+    "category": "/books/business",
+    "children": []
   },
   {
     "name": "cooking",
     "text": "Cooking",
     "parent": "/books",
-    "category": "/books/cooking"
+    "category": "/books/cooking",
+    "children": []
   },
   {
     "name": "history",
     "text": "History",
     "parent": "/books",
-    "category": "/books/history"
+    "category": "/books/history",
+    "children": []
   },
   {
     "name": "programming",
     "text": "Programming",
     "parent": "/books",
-    "category": "/books/programming"
+    "category": "/books/programming",
+    "children": []
   },
   {
     "name": "games",
     "text": "Games",
     "parent": "/",
-    "category": "/games"
+    "category": "/games",
+    "children": [
+      "pc",
+      "ps3",
+      "ps4",
+      "wiiu",
+      "xbox360"
+    ]    
   },
   {
     "name": "pc",
     "text": "PC",
     "parent": "/games",
-    "category": "/games/pc"
+    "category": "/games/pc",
+    "children": []
   },
   {
     "name": "ps3",
     "text": "PS3",
     "parent": "/games",
-    "category": "/games/ps3"
+    "category": "/games/ps3",
+    "children": []
   },
   {
     "name": "ps4",
     "text": "PS4",
     "parent": "/games",
-    "category": "/games/ps4"
+    "category": "/games/ps4",
+    "children": []
   },
   {
     "name": "wiiu",
     "text": "WiiU",
     "parent": "/games",
-    "category": "/games/wiiu"
+    "category": "/games/wiiu",
+    "children": []
   },
   {
     "name": "xbox360",
     "text": "Xbox360",
     "parent": "/games",
-    "category": "/games/xbox360"
+    "category": "/games/xbox360",
+    "children": []
   }
 ]

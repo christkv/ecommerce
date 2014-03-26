@@ -24,6 +24,16 @@ var init = function(_db) {
     callback(null, null);    
   }
 
+  Category.findByCategory = function(category, callback) {
+    // Locate the category
+    var coll = db.collection(collectionName);
+    // Get the category
+    coll.findOne({category: category}, function(err, cat) {
+      if(err) return callback(err);
+      callback(err, new Category(cat));
+    });    
+  }
+
   Category.findChildrenOf = function(root, options, callback) {
     if(typeof options == 'function') {
       callback = options;
@@ -39,18 +49,18 @@ var init = function(_db) {
       
       // Get the categories directly under the root    
       coll.find({parent: cat.category}).toArray(function(err, docs) {
-          if(err) return callback(err);
+        if(err) return callback(err);
 
-          // Map the results
-          var results = {
-              root: new Category(cat)
-            , categories: docs.map(function(p) {
-              return new Category(p);
-            })
-          }
+        // Map the results
+        var results = {
+            root: new Category(cat)
+          , categories: docs.map(function(p) {
+            return new Category(p);
+          })
+        }
 
-          // Return the products but map them to our type first
-          callback(null, results);
+        // Return the products but map them to our type first
+        callback(null, results);
       });
     });
   }

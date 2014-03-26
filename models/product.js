@@ -1,3 +1,6 @@
+var ObjectID = require('mongodb').ObjectID
+  , f = require('util').format;
+
 // Store the db instance
 var db = null;
 var collectionName = 'products';
@@ -13,6 +16,17 @@ var init = function(_db) {
     } 
   }
 
+  Product.findOne = function(id, callback) {
+    try {
+      db.collection(collectionName).findOne(new ObjectID(id), function(err, p) {
+        if(err) return callback(err, null);
+        callback(null, new Product(p));
+      });
+    } catch(err) {
+      return callback(err, null);
+    }
+  }
+
   Product.init = function(callback) {
     db.collection(collectionName).ensureIndex({'salesrank': -1}, {background:true}, function(err) {
       if(err) return callback(err);
@@ -21,11 +35,17 @@ var init = function(_db) {
   }
 
   Product.topProducts = function(options, callback) {
+    // Basic query
+    var query = {};
     // Limit
     var limit = options.limit || 10;
+    if(options.category && options.category != '/') {
+      query.category = new RegExp(f("^%s", options.category), "i");
+    }
+
     // Get the 10 most popular products
     db.collection(collectionName)
-      .find().sort({salesRank:-1}).limit(limit).toArray(function(err, products) {
+      .find(query).sort({salesRank:-1}).limit(limit).toArray(function(err, products) {
         if(err) return callback(err);
 
         // Return the products but map them to our type first

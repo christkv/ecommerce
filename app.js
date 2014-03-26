@@ -19,11 +19,18 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
-app.use(express.json());
+// app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
-app.use(app.router);
+app.use(express.bodyParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(express.cookieParser());
+app.use(express.cookieSession({
+  secret: 'diku234243423lkklkl'
+}));
+
+app.use(app.router);
 
 // development only
 if('development' == app.get('env')) {
@@ -50,7 +57,14 @@ MongoClient.connect("mongodb://localhost:27017/ecommerce", function(err, db) {
 	// Map up all the routes
 	app.get('/', routes.index);
   app.get('/index/:category', routes.index);
-	// app.get('/users', user.list(db));
+  app.get('/product/:id', routes.product);
+
+  // All the cart operations
+  app.post('/cart/add', routes.addToCart);
+  app.delete('/cart/remove', routes.removeFromCart);
+  app.put('/cart/update', routes.updateCart);
+  app.put('/cart/clear', routes.clearCart);
+  app.get('/cart', routes.cart);
 
   // Call init on all the types (setting up indexes etc)
   intitalizeTypes([
