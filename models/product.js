@@ -7,9 +7,9 @@ var collectionName = 'products';
 var init = function(_db) {
   if(_db) db = _db;
   
-  var Product = function(product) {
-    for(var name in product) {
-      this[name] = product[name];
+  var Product = function(object) {
+    for(var name in object) {
+      this[name] = object[name];
     } 
   }
 

@@ -1,0 +1,74 @@
+[
+  {
+    "name": "/",
+    "text": "/",
+    "parent": "",
+    "category": "/"
+  },
+  {
+    "name": "books",
+    "text": "Books",
+    "parent": "/",
+    "category": "/books"
+  },
+  {
+    "name": "business",
+    "text": "Business",
+    "parent": "/books",
+    "category": "/books/business"
+  },
+  {
+    "name": "cooking",
+    "text": "Cooking",
+    "parent": "/books",
+    "category": "/books/cooking"
+  },
+  {
+    "name": "history",
+    "text": "History",
+    "parent": "/books",
+    "category": "/books/history"
+  },
+  {
+    "name": "programming",
+    "text": "Programming",
+    "parent": "/books",
+    "category": "/books/programming"
+  },
+  {
+    "name": "games",
+    "text": "Games",
+    "parent": "/",
+    "category": "/games"
+  },
+  {
+    "name": "pc",
+    "text": "PC",
+    "parent": "/games",
+    "category": "/games/pc"
+  },
+  {
+    "name": "ps3",
+    "text": "PS3",
+    "parent": "/games",
+    "category": "/games/ps3"
+  },
+  {
+    "name": "ps4",
+    "text": "PS4",
+    "parent": "/games",
+    "category": "/games/ps4"
+  },
+  {
+    "name": "wiiu",
+    "text": "WiiU",
+    "parent": "/games",
+    "category": "/games/wiiu"
+  },
+  {
+    "name": "xbox360",
+    "text": "Xbox360",
+    "parent": "/games",
+    "category": "/games/xbox360"
+  }
+]

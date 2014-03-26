@@ -13,6 +13,7 @@ pids
 logs
 results
 db
+data
 
 npm-debug.log
 node_modules

@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  div(class='navbar navbar-inverse navbar-fixed-top', role='navigation')
+    div(class='container')
+      div(class='navbar-header')
+        button(type="button", class="navbar-toggle", data-toggle="collapse", data-target=".navbar-collapse")
+          span(class="sr-only") Toggle navigation
+          span(class="icon-bar")
+          span(class="icon-bar")
+          span(class="icon-bar")
+        a(class="navbar-brand" href="#") Mongo eCommerce
+  
+  div(class='container')
+    ol(class="breadcrumb")
+      each elem in path.root.split()
+        li
+          a(href='/index/#{elem}') #{elem.capitalize()}
+
+    div(class='row')
+      div(class='col-md-2')
+        block left
+      div(class='col-md-10')
+        block right

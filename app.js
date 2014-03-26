@@ -26,8 +26,13 @@ app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
-if ('development' == app.get('env')) {
+if('development' == app.get('env')) {
   app.use(express.errorHandler());
+}
+
+// Add a capitalize method to string objects
+String.prototype.capitalize = function() {
+  return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
 var intitalizeTypes = function(types, callback) {
@@ -44,11 +49,16 @@ MongoClient.connect("mongodb://localhost:27017/ecommerce", function(err, db) {
 
 	// Map up all the routes
 	app.get('/', routes.index);
+  app.get('/index/:category', routes.index);
 	// app.get('/users', user.list(db));
 
   // Call init on all the types (setting up indexes etc)
   intitalizeTypes([
       require('./models/product')(db)
+    , require('./models/cart')(db)
+    , require('./models/category')(db)
+    , require('./models/inventory')(db)
+    , require('./models/user')(db)
   ], function(err) {
     if(err) throw err;
     // Start http server
