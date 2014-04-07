@@ -28,9 +28,17 @@ var init = function(_db) {
   }
 
   Product.init = function(callback) {
+    // Ensure index on sales rank
     db.collection(collectionName).ensureIndex({'salesrank': -1}, {background:true}, function(err) {
       if(err) return callback(err);
-      callback(null, null);    
+
+      // Ensure text index on interesting fields
+      db.collection(collectionName).ensureIndex({
+        "$**": "text"
+      }, { background:true }, function(err) {
+        if(err) return callback(err);
+        callback(null, null);    
+      });
     });
   }
 
@@ -54,6 +62,34 @@ var init = function(_db) {
         }));
     });
   }  
+
+  Product.search = function(search, options, callback) {
+    if(typeof options == 'function') {
+      callback = options;
+      options = {};
+    }
+
+    options = options || {}
+    search = search || "";
+    query = search == "" ? {} : {$text: {$search: search}};
+    limit = options.limit || 10;
+    skip = options.skip || 10;
+    // skip = 10
+
+    console.dir(options)
+    console.dir(query)
+    db.collection(collectionName)
+      .find(query, {score: {$meta: 'textScore'}})
+      .limit(limit)
+      .skip(skip)
+      .toArray(function(err, products) {
+        if(err) return callback(err);
+
+        callback(null, products.map(function(p) {
+          return new Product(p);
+        }));      
+    })
+  }
 
   return Product;
 }

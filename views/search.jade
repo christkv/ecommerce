@@ -1,0 +1,59 @@
+extends site
+
+div(class='container')
+  div(class='row')
+    div(class='col-md-4')
+      block left
+          h4 #{path.root.text == '/' ? '' : path.root.text}
+          ul(class='nav nav-pills nav-stacked')
+            each category in path.categories
+              li(class='nt') 
+                a(href='/index/#{category.name}') #{category.text}
+
+    div(class='col-md-8')
+      block right
+        div(class='container')
+          div(class='row')
+            div(class='col-md-10')
+              div(class='panel panel-default')
+                div(class='panel-body') #{search}
+            div(class='col-md-2')
+          each product, index in products
+            div(class='row')
+              div(class='col-md-1')
+                a(href="/product/#{product._id}")
+                  img(src=product.images.small.url, class='thumbnail')
+              div(class='col-md-8', style='padding-left:50px')
+                div(class='row')
+                  div(class='caption')
+                  a(href="/product/#{product._id}", class='caption')
+                    label #{product.title}
+                div(class='row')
+                  label #{product.author}
+              div(class='col-md-4')
+        - var leftIndex = index > 0 ? index - 1 : 0
+        - var encoded = encodeURI(search)
+        - var a = "active"
+        ul(class="pagination")
+          li 
+            a(href="/search/#{startIndex}/-1?search=#{encoded}") &laquo;
+          li(class= currentIndex == startIndex + 10 ? 'active' : '') 
+            a(href="/search/#{startIndex}/#{startIndex + 10}?search=#{encoded}") #{page + 1}
+          li(class= currentIndex == startIndex + 20 ? 'active' : '') 
+            a(href="/search/#{startIndex}/#{startIndex + 20}?search=#{encoded}") #{page + 2}
+          li(class= currentIndex == startIndex + 30 ? 'active' : '') 
+            a(href="/search/#{startIndex}/#{startIndex + 30}?search=#{encoded}") #{page + 3}
+          li(class= currentIndex == startIndex + 40 ? 'active' : '') 
+            a(href="/search/#{startIndex}/#{startIndex + 40}?search=#{encoded}") #{page + 4}
+          li(class= currentIndex == startIndex + 50 ? 'active' : '') 
+            a(href="/search/#{startIndex}/#{startIndex + 50}?search=#{encoded}") #{page + 5}
+          li(class= currentIndex == startIndex + 60 ? 'active' : '') 
+            a(href="/search/#{startIndex}/#{startIndex + 60}?search=#{encoded}") #{page + 6}
+          li(class= currentIndex == startIndex + 70 ? 'active' : '') 
+            a(href="/search/#{startIndex}/#{startIndex + 70}?search=#{encoded}") #{page + 7}
+          li(class= currentIndex == startIndex + 80 ? 'active' : '') 
+            a(href="/search/#{startIndex}/#{startIndex + 80}?search=#{encoded}") #{page + 8}
+          li(class= currentIndex == startIndex + 90 ? 'active' : '') 
+            a(href="/search/#{startIndex}/#{startIndex + 90}?search=#{encoded}") #{page + 9}
+          li 
+            a(href="/search/#{startIndex}/-2?search=#{encoded}") &raquo;

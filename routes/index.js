@@ -54,6 +54,85 @@ exports.product = function(req, res) {
 }
 
 //
+// Fetch All navigational information
+var fetchNavigational = function(req, res, callback) {
+  // Category root
+  var root = req.params.category || '/';
+  // Get the top level categories
+  Category.findChildrenOf(root, function(err, path) {
+    if(err) return callback(err, null);
+    callback(null, { path: path });
+  });
+}
+
+/*
+ * Search
+ */
+exports.search = function(req, res) {
+  // Search parameter
+  var search = req.body.search || req.query.search;
+  // Get number to skip
+  console.dir(req.params)
+  var skip = req.params.currentIndex ? parseInt(req.params.currentIndex, 10) : 0;
+  
+  // Items pr page
+  var limit = 10;
+  var numberOfPages = 10;
+
+  // Start and current index
+  var startIndex = req.params.startIndex ? parseInt(req.params.startIndex, 10) : 0;
+  var currentIndex = skip;
+
+  // We pushed next
+  if(skip == -2) {
+    startIndex = startIndex + (numberOfPages * limit);
+    currentIndex = startIndex + limit;
+    skip = currentIndex;
+  } else if(skip == -1) {
+    startIndex = startIndex - (numberOfPages * limit);
+    startIndex = startIndex <= 0 ? 0 : startIndex;
+    currentIndex = startIndex;
+    skip = currentIndex;
+  }
+
+  // Current page
+  var page = startIndex/limit;
+
+  // Options
+  var options = {
+      skip: skip
+    , limit: limit
+  }
+
+  // Perform a search
+  Product.search(search, options, function(err, products) {
+    if(err) throw err;
+
+    // Get all the basic navigational information
+    fetchNavigational(req, res, function(err, context) {
+      // Add products to context
+      context.products = products;
+      context.search = search || "";
+      context.startIndex = startIndex;
+      context.currentIndex = currentIndex;
+      context.page = page;
+      // Do we need to adjust the index
+      if(skip.toString().substr())
+
+      // Render search view
+      res.render('search', context);
+    });
+  });
+}
+
+
+// -------------------------------------------------------------------
+//
+// Cart Operations
+//
+// -------------------------------------------------------------------
+
+//
 // Get or Create Cart
 var getCart = function(session, callback) {
   // No cart for session

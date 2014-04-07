@@ -19,10 +19,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
-// app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
 app.use(express.bodyParser());
+// app.use(express.json());
+// app.use(express.urlencoded());
+app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.cookieParser());
@@ -58,6 +58,8 @@ MongoClient.connect("mongodb://localhost:27017/ecommerce", function(err, db) {
 	app.get('/', routes.index);
   app.get('/index/:category', routes.index);
   app.get('/product/:id', routes.product);
+  app.post('/search', routes.search);
+  app.get('/search/:startIndex/:currentIndex', routes.search);
 
   // All the cart operations
   app.post('/cart/add', routes.addToCart);
