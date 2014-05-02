@@ -4,22 +4,8 @@ div(class='container')
   div(class='row')
     div(class='col-md-4')
       block left
-          h4 #{path.root.text == '/' ? '' : path.root.text}
-          ul(class='nav nav-pills nav-stacked')
-            each category in path.categories
-              li(class='nt') 
-                a(href='/index/#{category.name}') #{category.text}
+        Categories
 
     div(class='col-md-8')
       block right
-        div(class='container')
-          each product, index in products
-            if index % 3 == 0
-              div(class='row')
-
-            div(class='col-xs-6 col-md-4')
-              a(href="/product/#{product._id}")
-                img(src=product.images.medium.url)
-              div(class='caption')
-                a(href="/product/#{product._id}")
-                  label #{product.title}
+        Products
