@@ -32,7 +32,7 @@ if('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', rout)
+app.get('/', routes.index);
 
 // Start http server
 http.createServer(app).listen(app.get('port'), function(){
