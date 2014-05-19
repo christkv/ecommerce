@@ -1,6 +1,4 @@
-var Product = require('../models/product')()
-  , Category = require('../models/category')()
-  , Cart = require('../models/cart')()
+var Category = require('../models/category')()
   , moment = require('moment');
 
 /*
