@@ -23,71 +23,15 @@ var init = function(_db) {
   }
 
   Category.create = function(fields, callback) {
-    var errors = {};
-    // Fields cannot be empty
-    if(fields.name.length == 0) errors.name = 'Category name must be filled in';
-    if(fields.text.length == 0) errors.text = 'Description must be filled in';
-    if(fields.path.length == 0) errors.path = 'Path must be filled in';
-    if(fields.category.length == 0) errors.category = 'Category must be filled in';
-    
-    // Validate if parent exists
-    Category.findByParent(fields.path, function(err, result) {
-      if(result == null) {
-        errors.path = f("parent path %s does not exist", fields.path);
-      }
-
-      // Validate if path already exists
-      Category.findByCategory(fields.category, function(err, result) {
-        if(result != null) {
-          errors.category = f("category %s already exists", fields.path);
-        }
-
-        // if we have fields
-        if(Object.keys(errors).length > 0) return callback(errors, null);
-
-        // Create a new category and update the parent categories list of children
-        db.collection(collectionName).insert({
-            name: fields.name, text: fields.text
-          , parent: fields.path, category: fields.category
-          , children: []
-        }, {w:1}, function(err, result) {
-          if(err) throw err;
-
-          // Split category
-          var child = fields.category.split('/').pop();
-
-          // Saved the new category push the new name on the parent
-          db.collection(collectionName).update({category: fields.path}, {
-            $push: {children: child}
-          }, {w:1}, function(err, r) {
-            if(err) throw err;
-            callback(null, null);
-          });
-        });
-      });
-    })
+    // TODO
   }
 
   Category.remove = function(id, callback) {
-    db.collection(collectionName).remove({
-      _id: new ObjectID(id)
-    }, callback);
+    // TODO
   }
 
   Category.init = function(callback) {
-    db.collection(collectionName).ensureIndex({
-      name: 1, category: 1
-    }, function(err, result) {
-      if(err) throw err;
-
-      db.collection(collectionName).ensureIndex({
-        parent:1, category: 1, name: 1, text: 1
-      }, function(err, result) {
-        if(err) throw err;
-  
-        callback();
-      });
-    });
+    // TODO
   }
 
   Category.all = function(callback) {
@@ -122,36 +66,7 @@ var init = function(_db) {
   }
 
   Category.findChildrenOf = function(root, options, callback) {
-    if(typeof options == 'function') {
-      callback = options;
-      options = {};
-    }
-
-    // Locate the category
-    var coll = db.collection(collectionName);
-    
-    // Get the category, using covered index
-    coll.findOne({name: root}, {fields:{_id: 0, category:1}}, function(err, cat) {
-      if(err) return callback(err);
-      if(cat == null) return callback(new Error(f("category %s does not exist", root)));
-      
-      // Get the categories directly under the root using only the covered index   
-      coll.find({parent: cat.category}
-        , {fields: {_id: 0, category: 1, name: 1, text: 1}}).toArray(function(err, docs) {
-          if(err) return callback(err);
-
-          // Map the results
-          var results = {
-              root: new Category(cat)
-            , categories: docs.map(function(p) {
-              return new Category(p);
-            })
-          }
-
-          // Return the products but map them to our type first
-          callback(null, results);
-      });
-    });
+    // TODO
   }
 
   return Category;
