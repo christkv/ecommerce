@@ -127,19 +127,19 @@ var PreLoader = function(url) {
 var loader = new PreLoader("mongodb://localhost:27017/ecommerce");
 // Load all the basic category documents
 loader.loadCategories(__dirname + "/../preload_data/categories.json", function(err, r) {
-  // loader.transform({
-  //     categoryPath: "/games/"
-  //   , filterKeywords: ["xbox360", "pc", "ps3", "ps4", "wiiu"]
-  // }, function(err) {
-  //   if(err) throw err;
-  // });
+  loader.transform({
+      categoryPath: "/games/"
+    , filterKeywords: ["xbox360", "pc", "ps3", "ps4", "wiiu"]
+  }, function(err) {
+    if(err) throw err;
+  });
 
-  // loader.transform({
-  //     categoryPath: "/books/"
-  //   , filterKeywords: ["scifi", "programming", "history", "business", "cooking"]
-  // }, function(err) {
-  //   if(err) throw err;
-  // });
+  loader.transform({
+      categoryPath: "/books/"
+    , filterKeywords: ["scifi", "programming", "history", "business", "cooking"]
+  }, function(err) {
+    if(err) throw err;
+  });
 });
 
 

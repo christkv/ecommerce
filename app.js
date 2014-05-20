@@ -4,6 +4,7 @@
 var express = require('express');
 var routes = require('./routes');
 var category_routes = require('./routes/categories');
+var product_routes = require('./routes/products');
 var http = require('http');
 var path = require('path');
 
@@ -60,14 +61,23 @@ MongoClient.connect("mongodb://localhost:27017/ecommerce", function(err, db) {
 	app.get('/', routes.index);
   app.get('/index/:category', routes.index);
 
+  // Product
+  app.get('/product/:id', product_routes.product);  
+  app.get('/admin/product', product_routes.index);  
+  app.post('/admin/product/delete', product_routes.remove);  
+  app.get('/admin/product/add', product_routes.add);  
+  app.post('/admin/product/add', product_routes.addProduct);  
+
   // Category work
-  app.get('/category', category_routes.index);
-  app.post('/category/delete', category_routes.remove);
-  app.get('/category/add', category_routes.add);
-  app.post('/category/add', category_routes.addCategory);
+  app.get('/admin/category', category_routes.index);
+  app.post('/admin/category/delete', category_routes.remove);
+  app.get('/admin/category/add', category_routes.add);
+  app.post('/admin/category/add', category_routes.addCategory);
 
   // Initialize all the models
-  initializeModels(db, ['./models/category'], function() {
+  initializeModels(db, ['./models/category'
+    , './models/product'
+    , './models/inventory'], function() {
     
     // Start http server
     http.createServer(app).listen(app.get('port'), function(){

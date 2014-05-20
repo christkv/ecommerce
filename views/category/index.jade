@@ -3,20 +3,23 @@ extends ../admin
 block right
   div(class='container')
     h1 
-      a(href='/category/add', type='button', class='btn btn-success')
+      a(href='/admin/category/add', type='button', class='btn btn-success')
         span(class='glyphicon glyphicon-plus')
       = ' Categories'
-    table(class='table table-striped')
-      thead
-        th Category name
-        th
-      each category in categories
-        tbody
-          tr
-            td
-              = category.name
-            td
-              form(action="/category/delete", method="post")
-                input(type='hidden', name='id', id='id', value='#{category._id}')
-                button(type='submit', class='btn btn-danger')
-                  span(class='glyphicon glyphicon-trash')
+    div(class='row')
+      div(class='col-md-10')
+        table(class='table table-striped')
+          thead
+            th Category name
+            th 
+          each category in categories
+            tbody
+              tr
+                td
+                  = category.name
+                td(align='right')
+                  form(action="/admin/category/delete", method="post")
+                    input(type='hidden', name='id', id='id', value='#{category._id}')
+                    button(type='submit', class='btn btn-danger')
+                      span(class='glyphicon glyphicon-trash')
+      div(class='col-md-2')

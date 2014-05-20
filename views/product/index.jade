@@ -1,0 +1,31 @@
+extends ../admin
+
+block right
+  div(class='container')
+    h1 
+      a(href='/admin/product/add', type='button', class='btn btn-success')
+        span(class='glyphicon glyphicon-plus')
+      = ' Product'
+    div(class='row')
+      div(class='col-md-10')
+        table(class='table table-striped')
+          thead
+            th Product name
+            th Category
+            th(nowrap=true) #{skip} - #{skip + limit}
+          each product in products
+            tbody
+              tr
+                td
+                  = product.title
+                td
+                  = product.category
+                td(align='right')
+                  form(action="/admin/product/delete", method="post")
+                    input(type='hidden', name='id', id='id', value='#{product._id}')
+                    button(type='submit', class='btn btn-danger')
+                      span(class='glyphicon glyphicon-trash')
+      div(class='col-md-2')
+    a(href='/admin/product?limit=#{limit}&skip=#{skip}', type='button', class='btn btn-default')
+      span(class='glyphicon glyphicon-forward')
+      = ' Next '

@@ -3,10 +3,10 @@ extends ../admin
 block right
   div(class='container')    
     h1 
-      = 'Add a new Category'
+      = 'Add a new Product'
     div(class='row')
       div(class='col-md-8')
-        form(class='form-block', role='form', action="/admin/category/add", method="post")
+        form(class='form-block', role='form', action="/category/add", method="post")
           div(class='form-group #{errors && errors.name ? "has-error": ""}')
             label(for='name', class='control-label') Category name #{errors && errors.name ? "(" + errors.name + ")" : ""}
             input(type='text', class='form-control', name='name', id='name', placeholder='Enter category name', value='#{fields && fields.name ? fields.name : ""}')
