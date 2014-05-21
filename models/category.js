@@ -29,6 +29,7 @@ var init = function(_db) {
     if(fields.text.length == 0) errors.text = 'Description must be filled in';
     if(fields.path.length == 0) errors.path = 'Path must be filled in';
     if(fields.category.length == 0) errors.category = 'Category must be filled in';
+    if(Object.keys(errors).length > 0) return callback(errors, null);
     
     // Validate if parent exists
     Category.findByParent(fields.path, function(err, result) {
