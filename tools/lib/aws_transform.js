@@ -24,9 +24,9 @@ var AwsTransform = function(options) {
   //
   // Transform list price
   var convertListPrice = function(obj, name, value) {
-    if(name.toLowerCase == 'listprice') {
-      obj.price = parseInt(value.Amount[0], 10);
-      obj.currency = value.CurrencyCode[0];
+    if(name.toLowerCase() == 'listprice') {
+      obj.price = parseInt(value[0].Amount[0], 10);
+      obj.currency = value[0].CurrencyCode[0];
     }
   }
 
@@ -85,6 +85,10 @@ var AwsTransform = function(options) {
           for(var name in attr) {
             convertListPrice(obj, name, attr[name]);
 
+            if(name.toLowerCase() == "format") {
+              obj[name.toLowerCase()] = attr[name][0];
+            }
+
             // Skip if on ignore list
             if(ignoreFields.indexOf(name.toLowerCase()) != -1) continue;
             
@@ -114,8 +118,13 @@ var AwsTransform = function(options) {
         // Add category from keyword
         obj.category = categoryPath + category;
         obj.salesrank = i.SalesRank ? parseInt(i.SalesRank[0], 10) : 0;
+
         // Save to finial object array
-        objects.push(obj)
+        if(obj.format == null) {
+          objects.push(obj)          
+        } else if(obj.format != null && obj.format.toLowerCase().indexOf("kindle") == -1) {
+          objects.push(obj)                    
+        }
       });
     }); 
   }
