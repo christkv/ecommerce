@@ -20,6 +20,13 @@ var init = function(_db) {
     });
   }
 
+  Inventory.findByProductId = function(id, callback) {
+    db.collection(collectionName).findOne({product_id: id}, function(err, r) {
+      if(err) return callback(err);
+      callback(null, new Inventory(r));
+    });    
+  }
+
   Inventory.init = function(callback) {
     callback(null, null);    
   }

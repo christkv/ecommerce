@@ -1,5 +1,6 @@
 var Product = require('../models/product')()
   , Category = require('../models/category')()
+  , Inventory = require('../models/inventory')()
   , moment = require('moment');
 
 /*
@@ -10,22 +11,28 @@ exports.product = function(req, res) {
   Product.findOne(req.params.id, function(err, product) {
     if(err) throw err;
 
-    // Locate the product category root
-    Category.findByCategory(product.category, function(err, category) {
+    // Locate the inventory
+    Inventory.findByProductId(product._id, function(err, inventory) {
       if(err) throw err;
 
-      // Locate Path by category
-      Category.findChildrenOf(category.name, function(err, path) {
+      // Locate the product category root
+      Category.findByCategory(product.category, function(err, category) {
         if(err) throw err;
 
-        // Render the product list
-        res.render('product/product', { 
-            product: product 
-          , path: path
-          , moment: moment
+        // Locate Path by category
+        Category.findChildrenOf(category.name, function(err, path) {
+          if(err) throw err;
+
+          // Render the product list
+          res.render('product/product', { 
+              product: product 
+            , path: path
+            , inventory: inventory
+            , moment: moment
+          });
         });
-      });
-    });  
+      });  
+    });
   });
 }
 

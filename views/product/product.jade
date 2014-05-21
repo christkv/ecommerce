@@ -31,6 +31,9 @@ div(class='container')
                     td Number of Pages
                     td #{product.numberofpages}
                   tr
+                    td Available Inventory
+                    td #{inventory.available}
+                  tr
                     td Price
                     td #{(product.price || 0) / 100 } #{product.currency}
                   tr
