@@ -1,5 +1,7 @@
 var ObjectID = require('mongodb').ObjectID
-  , f = require('util').format;
+  , f = require('util').format
+  , Inventory = require('./inventory')()
+  , Category = require('./category')();
 
 // Store the db instance
 var db = null;
@@ -32,42 +34,42 @@ var init = function(_db) {
     if(fields.medium_url.length == 0) errors.medium_url = 'Medium image URL must be filled in';
     if(Object.keys(errors).length > 0) return callback(errors, null);
     
-    // Validate if parent exists
-    Category.findByParent(fields.path, function(err, result) {
+    // Validate if path already exists
+    Category.findByCategory(fields.category, function(err, result) {
       if(result == null) {
-        errors.path = f("parent path %s does not exist", fields.path);
+        errors.category = f("category %s does not exist", fields.path);
       }
 
-      // Validate if path already exists
-      Category.findByCategory(fields.category, function(err, result) {
-        if(result != null) {
-          errors.category = f("category %s already exists", fields.path);
+      // if we have fields
+      if(Object.keys(errors).length > 0) return callback(errors, null);
+
+      // Create a new product and update the parent categories list of children
+      db.collection(collectionName).insert({
+          title: fields.title, description: fields.description
+        , author: fields.author, category: fields.category
+        , price: parseInt(fields.price, 10), currency: 'USD'
+        , format: fields.format, numberofpages: parseInt(fields.numberofpages, 10)
+        , images: {
+            medium: {
+                url: fields.medium_url
+              , width: 124
+              , height: 160
+            }
+          , large: {
+              url: fields.large_url
+            , width: 124
+            , height: 160
+          }
         }
-
-        // if we have fields
-        if(Object.keys(errors).length > 0) return callback(errors, null);
-
-        // Create a new category and update the parent categories list of children
-        db.collection(collectionName).insert({
-            name: fields.name, text: fields.text
-          , parent: fields.path, category: fields.category
-          , children: []
-        }, {w:1}, function(err, result) {
+      }, {w:1}, function(err, doc) {
+        if(err) throw err;
+        // Create an inventory entry for the new product
+        Inventory.create({product_id: doc[0]._id, available: parseInt(fields.inventory, 10)}, function(err, result) {
           if(err) throw err;
-
-          // Split category
-          var child = fields.category.split('/').pop();
-
-          // Saved the new category push the new name on the parent
-          db.collection(collectionName).update({category: fields.path}, {
-            $push: {children: child}
-          }, {w:1}, function(err, r) {
-            if(err) throw err;
-            callback(null, null);
-          });
+          callback(null, null);
         });
       });
-    })
+    });
   }
 
   Product.findOne = function(id, callback) {
