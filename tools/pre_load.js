@@ -73,16 +73,36 @@ var PreLoader = function(url) {
 
   //
   // Insert into a collection
-  var insertIntoCollection = function(url, coll, objects, callback) {
+  var insertIntoCollection = function(url, coll, objects, options, callback) {
     // Connect to MongoDB and insert into products table
     MongoClient.connect(url, function(err, db) {
       if(err) return callback(err, null);
 
       db.collection(coll).drop(function(err) {
-        db.collection(coll).insert(objects, function(err) {
-          if(err) return callback(err, null);
-          db.close();
-          callback(null);
+        db.collection('inventories').drop(function(err) {
+          db.collection(coll).insert(objects, function(err, docs) {
+            if(err) return callback(err, null);
+            var total = docs.length;
+            // If we have inventory
+            if(options.inventory) {
+              for(var i = 0; i < docs.length; i++) {
+                db.collection('inventories').insert({
+                    product_id: docs[i]._id
+                  , available: options.inventory
+                }, {w:1}, function() {
+                  total = total - 1;
+
+                  if(total == 0) {
+                    db.close();
+                    callback(null);                  
+                  }
+                })
+              }
+            } else {
+              db.close();
+              callback(null);
+            }
+          });
         });
       });
     });    
@@ -110,7 +130,7 @@ var PreLoader = function(url) {
     
     // Load the data
     var objects = transformer.transform();
-    insertIntoCollection(url, 'products', objects, callback);
+    insertIntoCollection(url, 'products', objects, {inventory: 100}, callback);
   }
 
   //
@@ -118,7 +138,7 @@ var PreLoader = function(url) {
   this.loadCategories = function(file, callback) {
     // Load the categories and parse
     var objects = JSON.parse(fs.readFileSync(file, 'utf8'));
-    insertIntoCollection(url, 'categories', objects, callback);
+    insertIntoCollection(url, 'categories', objects, {}, callback);
   }
 }
 
