@@ -52,6 +52,10 @@ exports.remove = function(req, res) {
 }
 
 exports.add = function(req, res) {
+  res.render('./product/add', {
+      fields: {}
+    , errors: {}
+  });  
 }
 
 exports.addProduct = function(req, res) {
