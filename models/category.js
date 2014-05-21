@@ -31,7 +31,7 @@ var init = function(_db) {
   }
 
   Category.init = function(callback) {
-    // TODO
+    callback()
   }
 
   Category.all = function(callback) {

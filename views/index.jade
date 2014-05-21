@@ -4,11 +4,6 @@ div(class='container')
   div(class='row')
     div(class='col-md-4')
       block left
-          h4 #{path.root.text == '/' ? '' : path.root.text}
-          ul(class='nav nav-pills nav-stacked')
-            each category in path.categories
-              li(class='nt') 
-                a(href='/index/#{category.name}') #{category.text}
 
     div(class='col-md-8')
       block right

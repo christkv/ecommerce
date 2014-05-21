@@ -68,7 +68,6 @@ MongoClient.connect("mongodb://localhost:27017/ecommerce", function(err, db) {
 
   // Initialize all the models
   initializeModels(db, ['./models/category'], function() {
-    
     // Start http server
     http.createServer(app).listen(app.get('port'), function(){
       console.log('Express server listening on port ' + app.get('port'));
