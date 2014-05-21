@@ -59,4 +59,19 @@ exports.add = function(req, res) {
 }
 
 exports.addProduct = function(req, res) {
+  Product.create(req.body, function(errors, result) {
+    if(errors) {
+      // Get All the categories
+      Product.all(function(err, categories) {
+        if(err) throw err;
+        // Render the product list
+        res.render('./product/add', { 
+            fields: req.body
+          , errors: errors
+        });
+      });
+    } else {
+      exports.index(req, res);
+    }
+  });
 }

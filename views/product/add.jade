@@ -6,19 +6,49 @@ block right
       = 'Add a new Product'
     div(class='row')
       div(class='col-md-8')
-        form(class='form-block', role='form', action="/product/add", method="post")
-          div(class='form-group #{errors && errors.name ? "has-error": ""}')
-            label(for='name', class='control-label') Product title #{errors && errors.title ? "(" + errors.title + ")" : ""}
+        form(class='form-block', role='form', action="/admin/product/add", method="post")
+
+          div(class='form-group #{errors && errors.title ? "has-error": ""}')
+            label(for='title', class='control-label') Product title #{errors && errors.title ? "(" + errors.title + ")" : ""}
             input(type='text', class='form-control', name='title', id='title', placeholder='Enter product title', value='#{fields && fields.title ? fields.title : ""}')
-          div(class='form-group #{errors && errors.text ? "has-error": ""}')
-            label(for='text', class='control-label') Description #{errors && errors.text ? "(" + errors.text + ")" : ""}
-            input(type='text', class='form-control', name='text', id='text', placeholder='Enter description', value='#{fields && fields.text ? fields.text : ""}')
+
+          div(class='form-group #{errors && errors.description ? "has-error": ""}')
+            label(for='description', class='control-label') Description #{errors && errors.description ? "(" + errors.description + ")" : ""}
+            textarea(type='text', class='form-control', name='description', id='description', placeholder='Enter description', value='#{fields && fields.description ? fields.description : ""}')
+
           div(class='form-group #{errors && errors.author ? "has-error": ""}')
-            label(for='path', class='control-label') Author/Producer #{errors && errors.author ? "(" + errors.author + ")" : ""}
-            input(type='text', class='form-control', name='path', id='path', placeholder='Enter product author/producer', value='#{fields && fields.author ? fields.author : ""}')
+            label(for='author', class='control-label') Author/Producer #{errors && errors.author ? "(" + errors.author + ")" : ""}
+            input(type='text', class='form-control', name='author', id='author', placeholder='Enter product author/producer', value='#{fields && fields.author ? fields.author : ""}')
+
           div(class='form-group #{errors && errors.category ? "has-error": ""}')
             label(for='category', class='control-label') Category path #{errors && errors.category ? "(" + errors.category + ")" : ""}
             input(type='text', class='form-control', name='category', id='category', placeholder='Enter category path', value='#{fields && fields.category ? fields.category : ""}')
+
+          div(class='form-group #{errors && errors.price ? "has-error": ""}')
+            label(for='price', class='control-label') Price in cents #{errors && errors.price ? "(" + errors.price + ")" : ""}
+            input(type='number', class='form-control', name='price', id='price', placeholder='Enter price in cents', value='#{fields && fields.price ? fields.price : ""}')
+
+          div(class='form-group #{errors && errors.inventory ? "has-error": ""}')
+            label(for='inventory', class='control-label') Inventory #{errors && errors.inventory ? "(" + errors.inventory + ")" : ""}
+            input(type='number', class='form-control', name='inventory', id='inventory', placeholder='Enter product inventory', value='#{fields && fields.inventory ? fields.inventory : ""}')
+
+          div(class='form-group #{errors && errors.numberofpages ? "has-error": ""}')
+            label(for='numberofpages', class='control-label') Number of pages #{errors && errors.numberofpages ? "(" + errors.numberofpages + ")" : ""}
+            input(type='number', class='form-control', name='numberofpages', id='numberofpages', placeholder='Number of pages', value='#{fields && fields.numberofpages ? fields.numberofpages : ""}')
+
+          div(class='form-group #{errors && errors.format ? "has-error": ""}')
+            label(for='format', class='control-label') Format #{errors && errors.format ? "(" + errors.format + ")" : ""}
+            input(type='text', class='form-control', name='format', id='format', placeholder='Product format', value='#{fields && fields.format ? fields.format : ""}')
+
+          div(class='form-group #{errors && errors.large_url ? "has-error": ""}')
+            label(for='large_url', class='control-label') Product large image url #{errors && errors.large_url ? "(" + errors.large_url + ")" : ""}
+            input(type='url', class='form-control', name='large_url', id='large_url', placeholder='Product large image url', value='#{fields && fields.large_url ? fields.large_url : ""}')
+
+          div(class='form-group #{errors && errors.medium_url ? "has-error": ""}')
+            label(for='medium_url', class='control-label') Product medium image url #{errors && errors.medium_url ? "(" + errors.medium_url + ")" : ""}
+            input(type='url', class='form-control', name='medium_url', id='medium_url', placeholder='Product medium image url', value='#{fields && fields.medium_url ? fields.medium_url : ""}')
+
           button(type='sumbit', class='btn btn-default') Add
+
     div(class='col-md-4')
 

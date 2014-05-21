@@ -32,7 +32,7 @@ div(class='container')
                     td #{product.numberofpages}
                   tr
                     td Price
-                    td #{product.price}
+                    td #{(product.price || 0) / 100 } #{product.currency}
                   tr
                     td Release Date
                     td #{moment(product.releasedate).format("MMM Do YYYY")}

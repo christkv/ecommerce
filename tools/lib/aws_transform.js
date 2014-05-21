@@ -122,7 +122,7 @@ var AwsTransform = function(options) {
         // Save to finial object array
         if(obj.format == null) {
           objects.push(obj)          
-        } else if(obj.format != null && obj.format.toLowerCase().indexOf("kindle") == -1) {
+        } else if(obj.format != null && obj.format[0].toLowerCase().indexOf("kindle") == -1) {
           objects.push(obj)                    
         }
       });

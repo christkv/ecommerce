@@ -16,6 +16,60 @@ var init = function(_db) {
     } 
   }
 
+  Product.create = function(fields, callback) {
+    var errors = {};
+    console.dir(fields)
+    // Fields cannot be empty
+    if(fields.title.length == 0) errors.title = 'Product title must be filled in';
+    if(fields.description.length == 0) errors.description = 'Description must be filled in';
+    if(fields.author.length == 0) errors.author = 'Author must be filled in';
+    if(fields.category.length == 0) errors.category = 'Category must be filled in';
+    if(fields.price.length == 0) errors.price = 'Price must be filled in';
+    if(fields.inventory.length == 0) errors.inventory = 'Inventory must be filled in';
+    if(fields.format.length == 0) errors.format = 'Format must be filled in';
+    if(fields.numberofpages.length == 0) errors.numberofpages = 'Number of Pages must be filled in';
+    if(fields.large_url.length == 0) errors.large_url = 'Large image URL must be filled in';
+    if(fields.medium_url.length == 0) errors.medium_url = 'Medium image URL must be filled in';
+    if(Object.keys(errors).length > 0) return callback(errors, null);
+    
+    // Validate if parent exists
+    Category.findByParent(fields.path, function(err, result) {
+      if(result == null) {
+        errors.path = f("parent path %s does not exist", fields.path);
+      }
+
+      // Validate if path already exists
+      Category.findByCategory(fields.category, function(err, result) {
+        if(result != null) {
+          errors.category = f("category %s already exists", fields.path);
+        }
+
+        // if we have fields
+        if(Object.keys(errors).length > 0) return callback(errors, null);
+
+        // Create a new category and update the parent categories list of children
+        db.collection(collectionName).insert({
+            name: fields.name, text: fields.text
+          , parent: fields.path, category: fields.category
+          , children: []
+        }, {w:1}, function(err, result) {
+          if(err) throw err;
+
+          // Split category
+          var child = fields.category.split('/').pop();
+
+          // Saved the new category push the new name on the parent
+          db.collection(collectionName).update({category: fields.path}, {
+            $push: {children: child}
+          }, {w:1}, function(err, r) {
+            if(err) throw err;
+            callback(null, null);
+          });
+        });
+      });
+    })
+  }
+
   Product.findOne = function(id, callback) {
     try {
       db.collection(collectionName).findOne(new ObjectID(id), function(err, p) {
