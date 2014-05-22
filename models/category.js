@@ -53,17 +53,7 @@ var init = function(_db) {
           , children: []
         }, {w:1}, function(err, result) {
           if(err) throw err;
-
-          // Split category
-          var child = fields.category.split('/').pop();
-
-          // Saved the new category push the new name on the parent
-          db.collection(collectionName).update({category: fields.path}, {
-            $push: {children: child}
-          }, {w:1}, function(err, r) {
-            if(err) throw err;
-            callback(null, null);
-          });
+          callback(null, null);
         });
       });
     })
