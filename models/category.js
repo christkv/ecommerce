@@ -130,7 +130,6 @@ var init = function(_db) {
 
     // Locate the category
     var coll = db.collection(collectionName);
-    console.log(root)
     // Get the category, using covered index
     coll.findOne({category: root}, {fields:{_id: 0, category:1, text: 1}}, function(err, cat) {
       if(err) return callback(err);
