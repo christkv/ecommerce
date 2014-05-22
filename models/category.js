@@ -130,9 +130,8 @@ var init = function(_db) {
 
     // Locate the category
     var coll = db.collection(collectionName);
-    
     // Get the category, using covered index
-    coll.findOne({name: root}, {fields:{_id: 0, category:1, text: 1}}, function(err, cat) {
+    coll.findOne({category: root}, {fields:{_id: 0, category:1, text: 1}}, function(err, cat) {
       if(err) return callback(err);
       if(cat == null) return callback(new Error(f("category %s does not exist", root)));
       
