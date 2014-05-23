@@ -105,12 +105,17 @@ var init = function(_db) {
     db.collection(collectionName).ensureIndex({'salesrank': -1}, {background:true}, function(err) {
       if(err) return callback(err);
 
-      // Ensure text index on interesting fields
-      db.collection(collectionName).ensureIndex({
-        "$**": "text"
-      }, { background:true }, function(err) {
+      // Ensure meta data index
+      db.collection(collectionName).ensureIndex({"metadata.key":1,"metadata.value":1}, function(err) {
         if(err) return callback(err);
-        callback(null, null);    
+
+        // Ensure text index on interesting fields
+        db.collection(collectionName).ensureIndex({
+          "$**": "text"
+        }, { background:true }, function(err) {
+          if(err) return callback(err);
+          callback(null, null);    
+        });
       });
     });
   }

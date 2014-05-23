@@ -1,6 +1,7 @@
 var AwsTransform = require('./lib/aws_transform')
   , AwsDump = require('./lib/aws_dump')
   , MongoClient = require('mongodb').MongoClient
+  , ObjectID = require('mongodb').ObjectID
   , fs = require('fs');
 
 var PreLoader = function(url) {  
@@ -140,51 +141,52 @@ var PreLoader = function(url) {
     var objects = JSON.parse(fs.readFileSync(file, 'utf8'));
     insertIntoCollection(url, 'categories', objects, {}, callback);
   }
+
+  //
+  // Preload the categories documents
+  this.loadProducts = function(file, callback) {
+    // Load the categories and parse
+    var objects = fs.readFileSync(file, 'utf8').split(/\n/);
+    objects.pop();
+    objects = objects.map(function(d) {
+      d = JSON.parse(d);
+      d._id = new ObjectID(d._id['$oid']);
+      return d;
+    })
+
+    // Create dummy inventory entries
+    var inventories = objects.map(function(d) {
+      return {
+        product_id: d._id, available: 100
+      }
+    });
+
+    insertIntoCollection(url, 'products', objects, {}, function(err) {
+      if(err) return callback(err);
+
+      insertIntoCollection(url, 'inventories', inventories, {}, callback);
+    });
+  }
 }
 
 //
 // Create a preloader
 var loader = new PreLoader("mongodb://localhost:27017/ecommerce");
+
 // Load all the basic category documents
-loader.loadCategories(__dirname + "/../preload_data/categories.json", function(err, r) {
-  loader.transform({
-      categoryPath: "/games/"
-    , filterKeywords: ["xbox360", "pc", "ps3", "ps4", "wiiu"]
-  }, function(err) {
-    if(err) throw err;
-  });
+loader.loadCategories(__dirname + "/../preload_data/categories.json", function(err, r) {});
+loader.loadProducts(__dirname + "/../preload_data/products.json", function(err, r) {});
 
-  loader.transform({
-      categoryPath: "/books/"
-    , filterKeywords: ["scifi", "programming", "history", "business", "cooking"]
-  }, function(err) {
-    if(err) throw err;
-  });
-});
+  // loader.transform({
+  //     categoryPath: "/games/"
+  //   , filterKeywords: ["xbox360", "pc", "ps3", "ps4", "wiiu"]
+  // }, function(err) {
+  //   if(err) throw err;
+  // });
 
-
-// loader.getAndTransform(["programming"], "Books", {
-//   categoryPath: "/books/"
-// }, function(err) {
-//   if(err) throw err;
-// });
-
-// // Load the games
-// loader.getAndTransform(["ps3", "pc", "ps4", "xbox360", "wiiu"], "VideoGames", {
-//   categoryPath: "/games/"
-// }, function(err) {
-//   if(err) throw err;
-  
-//   // Load books
-//   loader.getAndTransform(["cooking", "scifi", "programming", "history", "business"], "Books", {
-//     categoryPath: "/books/"
-//   }, function(err) {
-//     if(err) throw err;
-//   });
-// });
-
-// loader.transform({
-//   filterKeywords: ["xbox360"]
-// }, function(err) {
-//   if(err) throw err;
-// });
+  // loader.transform({
+  //     categoryPath: "/books/"
+  //   , filterKeywords: ["scifi", "programming", "history", "business", "cooking"]
+  // }, function(err) {
+  //   if(err) throw err;
+  // });

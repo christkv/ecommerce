@@ -80,13 +80,18 @@ var AwsTransform = function(options) {
           obj.description = i.EditorialReviews[0].EditorialReview[0].Content;
         }
 
+        // Adds an empty metadata field
+        obj.metadata = [];
+        // Contains the value
+        var value = null;
+
         // Get all the attributes
         i.ItemAttributes.forEach(function(attr) {
           for(var name in attr) {
             convertListPrice(obj, name, attr[name]);
 
             if(name.toLowerCase() == "format") {
-              obj[name.toLowerCase()] = attr[name][0];
+              value = obj[name.toLowerCase()] = attr[name][0];
             }
 
             // Skip if on ignore list
@@ -99,19 +104,25 @@ var AwsTransform = function(options) {
 
             // obj[name] = attr[name];
             if(Array.isArray(attr[name]) && attr[name].length == 1) {
-              obj[name.toLowerCase()] = attr[name][0];
+              value = obj[name.toLowerCase()] = attr[name][0];
             } else {
-              obj[name.toLowerCase()] = attr[name];
+              value = obj[name.toLowerCase()] = attr[name];
             }
 
             // If we have specific fields parse them
             if(parseToInt.indexOf(name) != -1) {
-              obj[name.toLowerCase()] = parseInt(obj[name.toLowerCase()], 10);
+              value = obj[name.toLowerCase()] = parseInt(obj[name.toLowerCase()], 10);
             }
 
             if(parseToDate.indexOf(name) != -1) {
-              obj[name.toLowerCase()] = moment(obj[name.toLowerCase()]).toDate();
+              value = obj[name.toLowerCase()] = moment(obj[name.toLowerCase()]).toDate();
             }
+
+            // Push to Metadata object
+            obj.metadata.push({
+                key: name.toLowerCase()
+              , value: value
+            })
           }
         });
 
