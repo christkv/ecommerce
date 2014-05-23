@@ -20,7 +20,7 @@ exports.product = function(req, res) {
         if(err) throw err;
 
         // Locate Path by category
-        Category.findChildrenOf(category.name, function(err, path) {
+        Category.findChildrenOf(category.category, function(err, path) {
           if(err) throw err;
 
           // Render the product list

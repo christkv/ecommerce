@@ -25,33 +25,6 @@ exports.index = function(req, res) {
   });
 }
 
-/*
- * Show product
- */
-exports.product = function(req, res) {
-  // Get the product and the category
-  Product.findOne(req.params.id, function(err, product) {
-    if(err) throw err;
-
-    // Locate the product category root
-    Category.findByCategory(product.category, function(err, category) {
-      if(err) throw err;
-
-      // Locate Path by category
-      Category.findChildrenOf(category.name, function(err, path) {
-        if(err) throw err;
-
-        // Render the product list
-        res.render('product', { 
-            product: product 
-          , path: path
-          , moment: moment
-        });
-      });
-    });  
-  });
-}
-
 //
 // Fetch All navigational information
 var fetchNavigational = function(req, res, callback) {
