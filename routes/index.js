@@ -7,8 +7,15 @@ var Category = require('../models/category')()
 exports.index = function(req, res) {
   // Category root
   var root = req.params.category || '/';
-  // Render the product list
-  res.render('index', {});
+  // Get the top level categories
+  Category.findChildrenOf(root, function(err, path) {
+    if(err) throw err;
+
+    // Render the product list
+    res.render('index', { 
+      path: path
+    });
+  });
 }
 
 //

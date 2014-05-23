@@ -24,10 +24,12 @@ var init = function(_db) {
 
   Category.create = function(fields, callback) {
     // TODO
+    callback(null, null);
   }
 
   Category.remove = function(id, callback) {
     // TODO
+    callback(null, null);
   }
 
   Category.init = function(callback) {
@@ -66,7 +68,15 @@ var init = function(_db) {
   }
 
   Category.findChildrenOf = function(root, options, callback) {
-    // TODO
+    if(typeof options == 'function') {
+      callback = options;
+      options = {};
+    }
+
+    callback(null, {
+        root: new Category({category: '/', text: '/'})
+      , categories: []
+    });
   }
 
   return Category;
