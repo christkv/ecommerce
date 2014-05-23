@@ -142,6 +142,24 @@ var PreLoader = function(url) {
     insertIntoCollection(url, 'categories', objects, {}, callback);
   }
 
+  var reWrite = function(d) {
+    for(var name in d) {
+      var v = d[name];
+
+      if(name == '$oid') {
+        return new ObjectID(d[name]);
+      } else if(name == '$date') {
+        return new Date(d[name]);
+      }
+
+      if(v != null && typeof v == 'object') {
+        d[name] = reWrite(v)
+      }
+    }
+
+    return d;
+  }
+
   //
   // Preload the categories documents
   this.loadProducts = function(file, callback) {
@@ -149,9 +167,7 @@ var PreLoader = function(url) {
     var objects = fs.readFileSync(file, 'utf8').split(/\n/);
     objects.pop();
     objects = objects.map(function(d) {
-      d = JSON.parse(d);
-      d._id = new ObjectID(d._id['$oid']);
-      return d;
+      return reWrite(JSON.parse(d));
     })
 
     // Create dummy inventory entries
