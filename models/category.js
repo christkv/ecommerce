@@ -27,16 +27,24 @@ var init = function(_db) {
     // Fields cannot be empty
     if(fields.name.length == 0) errors.name = 'Category name must be filled in';
     if(fields.text.length == 0) errors.text = 'Description must be filled in';
-    if(fields.path.length == 0) errors.path = 'Path must be filled in';
     if(fields.category.length == 0) errors.category = 'Category must be filled in';
     if(Object.keys(errors).length > 0) return callback(errors, null);
     
+    // Split the category and validate if the parent exists
+    var categoryFields = fields.category.split('/');
+    // Remove the last part of the category to find the parent
+    categoryFields.pop();
+    // Create the parent path
+    var parent = categoryFields.join('/');
+    parent = parent.length == 0 ? '/' : parent;
+
     // Validate if parent exists
-    Category.findByParent(fields.path, function(err, result) {
+    Category.findByParent(parent, function(err, result) {
       if(result == null) {
-        errors.path = f("parent path %s does not exist", fields.path);
+        errors.category = f("parent path %s does not exist", parent);
       }
 
+      if(Object.keys(errors).length > 0) return callback(errors, null);
       // Validate if path already exists
       Category.findByCategory(fields.category, function(err, result) {
         if(result != null) {
@@ -49,7 +57,7 @@ var init = function(_db) {
         // Create a new category and update the parent categories list of children
         db.collection(collectionName).insert({
             name: fields.name, text: fields.text
-          , parent: fields.path, category: fields.category
+          , parent: parent, category: fields.category
           , children: []
         }, {w:1}, function(err, result) {
           if(err) throw err;

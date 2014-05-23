@@ -3,7 +3,7 @@ extends ../admin
 block right
   div(class='container')
     h1 
-      a(href='/category/add', type='button', class='btn btn-success')
+      a(href='/admin/category/add', type='button', class='btn btn-success')
         span(class='glyphicon glyphicon-plus')
       = ' Categories'
     table(class='table table-striped')
@@ -16,7 +16,7 @@ block right
             td
               = category.name
             td
-              form(action="/category/delete", method="post")
+              form(action="/admin/category/delete", method="post")
                 input(type='hidden', name='id', id='id', value='#{category._id}')
                 button(type='submit', class='btn btn-danger')
                   span(class='glyphicon glyphicon-trash')

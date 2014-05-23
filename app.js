@@ -61,10 +61,10 @@ MongoClient.connect("mongodb://localhost:27017/ecommerce", function(err, db) {
   app.get('/index/:category', routes.index);
 
   // Category work
-  app.get('/category', category_routes.index);
-  app.post('/category/delete', category_routes.remove);
-  app.get('/category/add', category_routes.add);
-  app.post('/category/add', category_routes.addCategory);
+  app.get('/admin/category', category_routes.index);
+  app.post('/admin/category/delete', category_routes.remove);
+  app.get('/admin/category/add', category_routes.add);
+  app.post('/admin/category/add', category_routes.addCategory);
 
   // Initialize all the models
   initializeModels(db, ['./models/category'], function() {
