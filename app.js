@@ -5,6 +5,7 @@ var express = require('express');
 var routes = require('./routes');
 var category_routes = require('./routes/categories');
 var product_routes = require('./routes/products');
+var cart_routes = require('./routes/carts');
 var http = require('http');
 var path = require('path');
 
@@ -74,10 +75,14 @@ MongoClient.connect("mongodb://localhost:27017/ecommerce", function(err, db) {
   app.get('/admin/category/add', category_routes.add);
   app.post('/admin/category/add', category_routes.addCategory);
 
+  // Cart
+  app.get('/cart', cart_routes.index);
+
   // Initialize all the models
   initializeModels(db, ['./models/category'
     , './models/product'
-    , './models/inventory'], function() {
+    , './models/inventory'
+    , './models/cart'], function() {
     
     // Start http server
     http.createServer(app).listen(app.get('port'), function(){

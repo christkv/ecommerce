@@ -7,14 +7,6 @@ block content
         a(href="/cart", class='glyphicon glyphicon-shopping-cart white')
       a(class="navbar-brand", href="/") Mongo eCommerce
 
-  div(class='container')
-    ol(class="breadcrumb")
-      each elem in path.root.split()
-        li
-          a(href='/index/#{elem}') #{elem.capitalize()}    
-  
   div(class='row')
-    div(class='col-md-2')
-      block left
-    div(class='col-md-10')
-      block right
+    div(class='col-md-12')
+      block main

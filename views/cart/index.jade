@@ -1,0 +1,38 @@
+extends ../single_page
+
+block main
+  div(class='container')
+    h1 
+      = 'Cart'
+    div(class='row')
+      div(class='col-md-12')
+        - var total = 0
+        table(class='table table-striped')
+          thead
+            th Item name
+            th Quantity
+            th Price
+            th
+          each item in cart.items
+            tbody
+              tr
+                td
+                  = item.title
+                td
+                  = item.quantity
+                td
+                  - total += item.price
+                  = item.price
+                td(align='right')
+                  form(action="/cart/delete", method="post")
+                    input(type='hidden', name='id', id='id', value='#{item._id}')
+                    button(type='submit', class='btn btn-danger')
+                      span(class='glyphicon glyphicon-trash')
+
+            tr
+              td
+                strong= "Total"
+              td                
+              td
+                = total
+              td                
