@@ -13,26 +13,25 @@ block main
             th Quantity
             th Price
             th
-          each item in cart.items
             tbody
+              each item in cart.items
+                tr
+                  td
+                    = item.title
+                  td
+                    = item.quantity
+                  td
+                    - total += item.price * item.quantity
+                    = item.price * item.quantity
+                  td(align='right')
+                    form(action="/cart/delete", method="post")
+                      input(type='hidden', name='id', id='id', value='#{item._id}')
+                      button(type='submit', class='btn btn-danger')
+                        span(class='glyphicon glyphicon-trash')
               tr
                 td
-                  = item.title
+                  strong= "Total"
+                td                
                 td
-                  = item.quantity
-                td
-                  - total += item.price
-                  = item.price
-                td(align='right')
-                  form(action="/cart/delete", method="post")
-                    input(type='hidden', name='id', id='id', value='#{item._id}')
-                    button(type='submit', class='btn btn-danger')
-                      span(class='glyphicon glyphicon-trash')
-
-            tr
-              td
-                strong= "Total"
-              td                
-              td
-                = total
-              td                
+                  = total
+                td                

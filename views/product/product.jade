@@ -39,6 +39,17 @@ div(class='container')
                   tr
                     td Release Date
                     td #{moment(product.releasedate).format("MMM Do YYYY")}
-                
-
-
+            div(class='panel panel-default')
+              div(class='panel-body') 
+                div(class='row')
+                  div(class='col-md-12')
+                    div(class='form-group #{error ? "has-error": ""}')
+                      if error
+                        label(for='format', class='control-label') #{error ? "(" + error + ")" : ""}
+                form(action="/cart/add", method="post")
+                  div(class='row')
+                    div(class='col-md-6')
+                      input(type='hidden', name='id', id='id', value='#{product._id}')
+                      input(type='number', name='quantity', id='quantity', value='1')
+                    div(class='col-md-6')
+                      button(type='submit', class='btn btn-success') Add To Cart

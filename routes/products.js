@@ -29,6 +29,7 @@ exports.product = function(req, res) {
             , path: path
             , inventory: inventory
             , moment: moment
+            , error: req.params.error
           });
         });
       });  

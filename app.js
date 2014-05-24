@@ -77,6 +77,7 @@ MongoClient.connect("mongodb://localhost:27017/ecommerce", function(err, db) {
 
   // Cart
   app.get('/cart', cart_routes.index);
+  app.post('/cart/add', cart_routes.add);
 
   // Initialize all the models
   initializeModels(db, ['./models/category'

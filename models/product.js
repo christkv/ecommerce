@@ -20,7 +20,6 @@ var init = function(_db) {
 
   Product.create = function(fields, callback) {
     var errors = {};
-    console.dir(fields)
     // Fields cannot be empty
     if(fields.title.length == 0) errors.title = 'Product title must be filled in';
     if(fields.description.length == 0) errors.description = 'Description must be filled in';
@@ -73,8 +72,10 @@ var init = function(_db) {
   }
 
   Product.findOne = function(id, callback) {
+    id = typeof id == 'string' ? new ObjectID(id) : id;
+
     try {
-      db.collection(collectionName).findOne(new ObjectID(id), function(err, p) {
+      db.collection(collectionName).findOne(id, function(err, p) {
         if(err) return callback(err, null);
         callback(null, new Product(p));
       });
