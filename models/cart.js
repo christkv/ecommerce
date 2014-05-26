@@ -43,8 +43,8 @@ var init = function(_db) {
   /**
    * Locate a cart by it's hex id
    */
-  Cart.findByHexId = function(id, callback) {
-    db.collection(collectionName).findOne({_id: new ObjectID(id)}, function(err, doc) {
+  Cart.findActiveByHexId = function(id, callback) {
+    db.collection(collectionName).findOne({_id: new ObjectID(id), status: 'active'}, function(err, doc) {
       if(err) return callback(err);
       if(doc == null) return callback(null, null);
       return callback(null, new Cart(doc));
@@ -108,7 +108,8 @@ var init = function(_db) {
           _id: self._id
         , "items.product_id": productId
       }, {
-        $pull: { items: { product_id: productId }}
+          $pull: { items: { product_id: productId }}
+        , $set: { modified_on: new Date() }
       }, function(err, r) {
         if(err) return callback(err);
         callback(null, null);
@@ -193,7 +194,7 @@ var init = function(_db) {
     // Create ObjectId
     productId = typeof productId == 'string' ? new ObjectID(productId) : productId;
     quantity = typeof quantity == 'string' ? parseInt(quantity, 10) : quantity;
-    
+
     // Go through the items and see if we already have this product in the list
     // we need to update the quantity instead of adding a new row
     for(var i = 0; i < this.items.length; i++) {

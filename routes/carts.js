@@ -24,7 +24,7 @@ var createOrRetrieveCart = function createOrRetrieveCart(id, callback) {
     Cart.create(callback);
   } else {
     // Attempt to locate the cart and create a new one if there is none
-    Cart.findByHexId(id, function(err, cart) {
+    Cart.findActiveByHexId(id, function(err, cart) {
       if(err) return callback(err);
       if(cart == null) return Cart.create(callback);
       callback(null, cart);
