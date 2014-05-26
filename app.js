@@ -80,12 +80,14 @@ MongoClient.connect("mongodb://localhost:27017/ecommerce", function(err, db) {
   app.post('/cart/add', cart_routes.add);
   app.post('/cart/update', cart_routes.update);
   app.get('/cart/remove/:id', cart_routes.remove);
+  app.post('/cart/checkout', cart_routes.checkout);
 
   // Initialize all the models
   initializeModels(db, ['./models/category'
     , './models/product'
     , './models/inventory'
-    , './models/cart'], function() {
+    , './models/cart'
+    , './models/invoice'], function() {
     
     // Start http server
     http.createServer(app).listen(app.get('port'), function(){

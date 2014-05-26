@@ -4,10 +4,11 @@ block main
   div(class='container')
     h1 
       = 'Cart'
-    div(class='row')
-      div(class='col-md-12')
-        - var total = 0
-        form(action="/cart/update", method="post")
+    hr
+    form(action="/cart/update", method="post")
+      div(class='row')
+        div(class='col-md-12')
+          - var total = 0
           table(class='table table-striped')
             thead
               th Item name
@@ -23,7 +24,8 @@ block main
                       input(type='number', name='product_quantity_#{item.product_id}', id='product_quantity_#{item.product_id}', value='#{item.quantity}')
                     td
                       - total += item.price * item.quantity
-                      = item.price * item.quantity
+                      = (item.price * item.quantity) / 100
+                      = " USD "
                     td(align='right')
                       a(href='/cart/remove/#{item.product_id}')
                         span(class='btn btn-danger')
@@ -33,16 +35,12 @@ block main
                     strong= "Total"
                   td                
                   td
-                    = total
-                  td                
-          div(class='panel panel-default')
-            div(class='panel-body') 
-              div(class='row')
-                div(class='col-md-12')
-                  div(class='form-group #{error ? "has-error": ""}')
-                    if error
-                      label(for='format', class='control-label') #{error ? "(" + error + ")" : ""}
-              div(class='row')
-                div(class='col-md-6')
-                  button(type='submit', class='btn btn-success') Update
-                div(class='col-md-6')
+                    = total / 100
+                    = " USD "
+                  td(align='right')               
+                    button(type='submit', value='update', class='btn btn-default') Update
+    form(action="/cart/checkout", method="post")
+      div(class='row')
+        div(class='col-md-10')
+          button(type='submit', value='checkout', class='btn btn-success') Checkout
+        div(class='col-md-2')

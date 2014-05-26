@@ -31,7 +31,11 @@ var init = function(_db) {
   }
 
   Inventory.init = function(callback) {
-    callback(null, null);    
+    // Ensure index on sales rank
+    db.collection(collectionName).ensureIndex({product_id: 1}, {background:true}, function(err) {
+      if(err) return callback(err);
+      callback(null, null);
+    });
   }
 
   Inventory.release = function(productId, cartId, callback) {

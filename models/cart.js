@@ -22,6 +22,8 @@ var init = function(_db) {
    * Initialize the model at application startup
    */
   Cart.init = function(callback) {
+    
+    
     callback();
   }
 

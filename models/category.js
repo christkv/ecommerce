@@ -85,16 +85,22 @@ var init = function(_db) {
 
   Category.init = function(callback) {
     db.collection(collectionName).ensureIndex({
-      name: 1, category: 1
+      category: 1
     }, function(err, result) {
       if(err) throw err;
 
       db.collection(collectionName).ensureIndex({
-        parent:1, category: 1, name: 1, text: 1
+        name: 1, category: 1
       }, function(err, result) {
         if(err) throw err;
-  
-        callback();
+
+        db.collection(collectionName).ensureIndex({
+          parent:1, category: 1, name: 1, text: 1
+        }, function(err, result) {
+          if(err) throw err;
+    
+          callback();
+        });
       });
     });
   }

@@ -135,6 +135,25 @@ exports.remove = function remove(req, res) {
   });
 }
 
+/*
+ * Cart Checkout
+ */
+exports.checkout = function checkout(req, res) {
+  // Get a cart
+  createOrRetrieveCart(req.session.cartId, function(err, cart) {
+    if(err) throw err;
+
+    // Remove product from cart
+    cart.remove(id, function(err, r) {
+      if(err) {
+        req.params.error = err;
+      }
+
+      exports.index(req, res); 
+    })
+  });  
+}
+
 
 
 
