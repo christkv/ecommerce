@@ -9,7 +9,8 @@ exports.index = function index(req, res) {
   createOrRetrieveCart(req.session.cartId, function(err, cart) {
     // Render the product list
     res.render('./cart/index', { 
-      cart: cart
+        cart: cart
+      , error: req.params.error
     });
   });
 }
@@ -60,3 +61,93 @@ exports.add = function add(req, res) {
     });
   });
 }
+
+/*
+ * Update a shopping cart
+ */
+exports.update = function update(req, res) {
+  var body = req.body;
+  var products = {};
+
+  // Parse all the items
+  for(var name in body) {
+    if(name.indexOf('product_quantity_') != -1) {
+      products[name.split('product_quantity_')[1]] = body[name];
+    }
+  }
+
+  // Get a cart
+  createOrRetrieveCart(req.session.cartId, function(err, cart) {
+    if(err) throw err;
+    var productUpdates = [];
+    
+    // Iterate over all the items to establish what products need updating
+    for(var i = 0; i < cart.items.length; i++) {
+      var item = cart.items[i];
+
+      // Parse the new quantity
+      var newQuantity = parseInt(products[item.product_id.toString()], 10);
+      // Check if the item needs to be update
+      if(newQuantity != item.quantity) {
+        productUpdates.push({
+            product_id: item.product_id
+          , quantity: item.quantity
+          , newQuantity: newQuantity
+        });
+      }
+    }
+
+    // Product updates available, just re-render the cart index
+    if(productUpdates.length == 0) {
+      return exports.index(req, res);
+    }
+
+    // Update the cart for the items that have changed
+    cart.updateAll(productUpdates, function(err, result) {
+      if(err) {
+        req.params.error = err;
+      }
+
+      exports.index(req, res); 
+    });
+  });
+}
+
+/*
+ * Remove product from shopping cart
+ */
+exports.remove = function remove(req, res) {
+  // Product id
+  var id = req.params.id;
+
+  // Get a cart
+  createOrRetrieveCart(req.session.cartId, function(err, cart) {
+    if(err) throw err;
+
+    // Remove product from cart
+    cart.remove(id, function(err, r) {
+      if(err) {
+        req.params.error = err;
+      }
+
+      exports.index(req, res); 
+    })
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

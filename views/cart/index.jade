@@ -7,31 +7,42 @@ block main
     div(class='row')
       div(class='col-md-12')
         - var total = 0
-        table(class='table table-striped')
-          thead
-            th Item name
-            th Quantity
-            th Price
-            th
-            tbody
-              each item in cart.items
+        form(action="/cart/update", method="post")
+          table(class='table table-striped')
+            thead
+              th Item name
+              th Quantity
+              th Price
+              th
+              tbody
+                each item in cart.items
+                  tr
+                    td
+                      = item.title
+                    td
+                      input(type='number', name='product_quantity_#{item.product_id}', id='product_quantity_#{item.product_id}', value='#{item.quantity}')
+                    td
+                      - total += item.price * item.quantity
+                      = item.price * item.quantity
+                    td(align='right')
+                      a(href='/cart/remove/#{item.product_id}')
+                        span(class='btn btn-danger')
+                          span(class='glyphicon glyphicon-trash')
                 tr
                   td
-                    = item.title
+                    strong= "Total"
+                  td                
                   td
-                    = item.quantity
-                  td
-                    - total += item.price * item.quantity
-                    = item.price * item.quantity
-                  td(align='right')
-                    form(action="/cart/delete", method="post")
-                      input(type='hidden', name='id', id='id', value='#{item._id}')
-                      button(type='submit', class='btn btn-danger')
-                        span(class='glyphicon glyphicon-trash')
-              tr
-                td
-                  strong= "Total"
-                td                
-                td
-                  = total
-                td                
+                    = total
+                  td                
+          div(class='panel panel-default')
+            div(class='panel-body') 
+              div(class='row')
+                div(class='col-md-12')
+                  div(class='form-group #{error ? "has-error": ""}')
+                    if error
+                      label(for='format', class='control-label') #{error ? "(" + error + ")" : ""}
+              div(class='row')
+                div(class='col-md-6')
+                  button(type='submit', class='btn btn-success') Update
+                div(class='col-md-6')

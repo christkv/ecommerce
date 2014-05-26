@@ -52,6 +52,72 @@ var init = function(_db) {
   }
 
   /**
+   * Update a list of products
+   */
+  Cart.prototype.updateAll = function(products, callback) {
+    var self = this;
+    if(products.length == 0) return callback(null, null);
+
+    // Total number of save we must perform
+    var totalProducts = products.length;
+    var errors = [];
+
+    // For each item we are going to add the new quantity and report all errors
+    for(var i = 0; i < products.length; i++) {
+      var newQuantity = products[i].newQuantity - products[i].quantity;
+      // Attempt to change each new item
+      self.add(products[i].product_id, newQuantity, function(err) {
+        totalProducts = totalProducts - 1;
+        if(err) errors.push(err);
+
+        // No more products to reserve
+        if(totalProducts == 0) {
+          if(errors.length > 0) return callback(errors, null);
+          callback(null, null);
+        }
+      });
+    }
+  }
+
+  /**
+   * Remove a product entirely or just a # number of items from the cart
+   */
+  Cart.prototype.remove = function(productId, callback) {
+    var self = this;
+
+    // Ensure correct types for parameters
+    productId = typeof productId == 'string' ? new ObjectID(productId) : productId;
+    var product = null;
+
+    // Locate the product id
+    for(var i = 0; i < this.items.length; i++) {
+      if(this.items[i].product_id.equals(productId)) {
+        product = this.items[i];
+      }
+    }
+
+    // No product found
+    if(product == null) return callback(new Error(f("no product with id %s found", productId)));
+
+    // Release the quantity back to the inventory
+    Inventory.release(productId, this._id, function(err, r) {
+      if(err) return callback(err);
+
+      // Let's remove the item from the cart
+      db.collection(collectionName).update({
+          _id: self._id
+        , "items.product_id": productId
+      }, {
+        $pull: { items: { product_id: productId }}
+      }, function(err, r) {
+        if(err) return callback(err);
+        callback(null, null);
+      });    
+    });
+  }
+
+
+  /**
    * Update a product quantity in the cart
    */
   Cart.prototype.update = function(productId, quantity, callback) {
@@ -73,6 +139,9 @@ var init = function(_db) {
 
     // Calculate the new delta we are trying to reserve
     var delta = quantity - oldQuantity;
+
+    // If we have a negative delta, we are returning items to the store
+    if(quantity == 0) return self.remove(productId, callback);
 
     // Update the quantity in the cart
     db.collection(collectionName).update({
@@ -176,12 +245,6 @@ var init = function(_db) {
         });
       });      
     });
-  }
-
-  this.update = function(id, quantity, callback) {    
-  }
-
-  this.remove = function(id, callback) {
   }
 
   return Cart;

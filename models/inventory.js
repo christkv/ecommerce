@@ -34,6 +34,42 @@ var init = function(_db) {
     callback(null, null);    
   }
 
+  Inventory.release = function(productId, cartId, callback) {
+    // Ensure we have correct types
+    productId = typeof productId == 'string' ? new ObjectID(productId) : productId;
+    cartId = typeof cartId == 'string' ? new ObjectID(cartId) : cartId;
+    
+    // Fetch the inventory entry
+    Inventory.findByProductId(productId, function(err, product) {
+      if(err) return callback(err, null);
+
+      var cart;
+      // Locate the cart entry
+      for(var i = 0; i < product.reserved.length; i++) {
+        if(product.reserved[i].cart_id.equals(cartId)) {
+          cart = product.reserved[i];
+          break;
+        }
+      }
+
+      // No cart found in list of reservations
+      if(cart == null) return callback(new Error(f("no cart found for cart id %s")));
+
+      // Let's return the reserved inventory from the cart
+      db.collection(collectionName).update({
+          product_id: productId
+        , "reserved.cart_id": cart.cart_id
+        , "reserved.quantity": cart.quantity
+      }, {
+          $inc: { available: cart.quantity }
+        , $pull: { reserved: { cart_id: cart.cart_id }}
+      }, function(err, r) {
+        if(err) return callback(err);
+        callback(null, null);
+      });    
+    });
+  }
+
   Inventory.update = function(productId, cartId, quantity, delta, callback) {
     // Ensure we have correct types
     productId = typeof productId == 'string' ? new ObjectID(productId) : productId;
