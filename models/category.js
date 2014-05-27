@@ -16,12 +16,40 @@ var init = function(_db) {
     } 
   }
 
+  /**
+   * Add all needed indexes
+   */
+  Category.init = function(callback) {
+    db.collection(collectionName).ensureIndex({
+      category: 1
+    }, function(err, result) {
+      if(err) throw err;
+
+      db.collection(collectionName).ensureIndex({
+        name: 1, category: 1
+      }, function(err, result) {
+        if(err) throw err;
+
+        db.collection(collectionName).ensureIndex({
+          parent:1, category: 1, name: 1, text: 1
+        }, function(err, result) {
+          if(err) throw err;
+    
+          callback();
+        });
+      });
+    });
+  }  
+
   Category.prototype.split = function() {
     var parts = this.category.split("/");
     parts.shift();
     return parts;
   }
 
+  /**
+   * Create a category entry
+   */
   Category.create = function(fields, callback) {
     var errors = {};
     // Fields cannot be empty
@@ -61,34 +89,34 @@ var init = function(_db) {
           , children: []
         }, {w:1}, function(err, result) {
           if(err) throw err;
-          callback(null, null);
+
+          // Split category
+          var child = fields.category.split('/').pop();
+
+          // Saved the new category push the new name on the parent
+          db.collection(collectionName).update({category: fields.path}, {
+            $push: {children: child}
+          }, {w:1}, function(err, r) {
+            if(err) throw err;
+            callback(null, null);
+          });
         });
       });
     })
   }
 
+  /**
+   * Remove a category
+   */
   Category.remove = function(id, callback) {
     db.collection(collectionName).remove({
       _id: new ObjectID(id)
     }, callback);
   }
 
-  Category.init = function(callback) {
-    db.collection(collectionName).ensureIndex({
-      name: 1, category: 1
-    }, function(err, result) {
-      if(err) throw err;
-
-      db.collection(collectionName).ensureIndex({
-        parent:1, category: 1, name: 1, text: 1
-      }, function(err, result) {
-        if(err) throw err;
-  
-        callback();
-      });
-    });
-  }
-
+  /**
+   * Get all categories
+   */
   Category.all = function(callback) {
     db.collection(collectionName).find().toArray(function(err, categories) {
       if(err) return callback(err);
@@ -96,7 +124,10 @@ var init = function(_db) {
     });
   }
 
-  Category.findByParent= function(path, callback) {
+  /**
+   * Find category by parent
+   */
+  Category.findByParent = function(path, callback) {
     db.collection(collectionName).findOne({parent: path}, function(err, doc) {
       if(err) return callback(err, null);
       if(doc == null) return callback(null, null);
@@ -104,6 +135,9 @@ var init = function(_db) {
     });
   }
 
+  /**
+   * Find category instance by category path
+   */
   Category.findByCategory= function(path, callback) {
     db.collection(collectionName).findOne({category: path}, function(err, doc) {
       if(err) return callback(err, null);
@@ -112,14 +146,9 @@ var init = function(_db) {
     });
   }
 
-  Category.findBy = function(path, callback) {
-    db.collection(collectionName).findOne({parent: path}, function(err, doc) {
-      if(err) return callback(err, null);
-      if(doc == null) return callback(null, null);
-      return callback(null, new Category(doc));
-    });
-  }
-
+  /**
+   * Find all children of a specific category
+   */
   Category.findChildrenOf = function(root, options, callback) {
     if(typeof options == 'function') {
       callback = options;
