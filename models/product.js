@@ -22,23 +22,8 @@ var init = function(_db) {
    * Create all needed indexes
    */
   Product.init = function(callback) {
-    // Ensure index on sales rank
-    db.collection(collectionName).ensureIndex({'salesrank': -1}, {background:true}, function(err) {
-      if(err) return callback(err);
-
-      // Ensure meta data index
-      db.collection(collectionName).ensureIndex({"metadata.key":1,"metadata.value":1}, function(err) {
-        if(err) return callback(err);
-
-        // Ensure text index on interesting fields
-        db.collection(collectionName).ensureIndex({
-          "$**": "text"
-        }, { background:true }, function(err) {
-          if(err) return callback(err);
-          callback(null, null);    
-        });
-      });
-    });
+    // TODO
+    callback();
   }
 
   /**
@@ -69,32 +54,8 @@ var init = function(_db) {
       // if we have fields
       if(Object.keys(errors).length > 0) return callback(errors, null);
 
-      // Create a new product and update the parent categories list of children
-      db.collection(collectionName).insert({
-          title: fields.title, description: fields.description
-        , author: fields.author, category: fields.category
-        , price: parseInt(fields.price, 10), currency: 'USD'
-        , format: fields.format, numberofpages: parseInt(fields.numberofpages, 10)
-        , images: {
-            medium: {
-                url: fields.medium_url
-              , width: 124
-              , height: 160
-            }
-          , large: {
-              url: fields.large_url
-            , width: 124
-            , height: 160
-          }
-        }
-      }, {w:1}, function(err, doc) {
-        if(err) throw err;
-        // Create an inventory entry for the new product
-        Inventory.create({product_id: doc[0]._id, available: parseInt(fields.inventory, 10)}, function(err, result) {
-          if(err) throw err;
-          callback(null, null);
-        });
-      });
+      // TODO
+      callback(null, null);
     });
   }
 
@@ -136,24 +97,7 @@ var init = function(_db) {
    * Find the top Products (sorted by salesrank) and allow limiting of results
    */
   Product.topProducts = function(options, callback) {
-    // Basic query
-    var query = {};
-    // Limit
-    var limit = options.limit || 10;
-    if(options.category && options.category != '/') {
-      query.category = new RegExp(f("^%s", options.category), "i");
-    }
-
-    // Get the 10 most popular products
-    db.collection(collectionName)
-      .find(query).sort({salesRank:-1}).limit(limit).toArray(function(err, products) {
-        if(err) return callback(err);
-
-        // Return the products but map them to our type first
-        callback(null, products.map(function(p) {
-          return new Product(p);
-        }));
-    });
+    // TODO
   }  
 
   return Product;
