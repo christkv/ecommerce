@@ -9,9 +9,12 @@ block content
 
   div(class='container')
     ol(class="breadcrumb")
+      - var a = [];
       each elem in path.root.split()
+        - a.push(elem);
+        - var uriPath = encodeURIComponent('/' + a.join());
         li
-          a(href='/index/#{elem}') #{elem.capitalize()}    
+          a(href='/index/#{uriPath}') #{elem.capitalize()}    
   
   div(class='row')
     div(class='col-md-2')
