@@ -122,14 +122,6 @@ var init = function(_db) {
     });
   }
 
-  Category.findBy = function(path, callback) {
-    db.collection(collectionName).findOne({parent: path}, function(err, doc) {
-      if(err) return callback(err, null);
-      if(doc == null) return callback(null, null);
-      return callback(null, new Category(doc));
-    });
-  }
-
   Category.findChildrenOf = function(root, options, callback) {
     if(typeof options == 'function') {
       callback = options;
