@@ -3,13 +3,18 @@ extends layout
 block content
   div(class='container')
     div(class="navbar navbar-inverse navbar-fixed-top", role="navigation")
+      div(class="navbar-form navbar-right", role="home")
+        a(href="/cart", class='glyphicon glyphicon-shopping-cart white')
       a(class="navbar-brand", href="/") Mongo eCommerce
 
   div(class='container')
     ol(class="breadcrumb")
+      - var a = [];
       each elem in path.root.split()
+        - a.push(elem);
+        - var uriPath = encodeURIComponent('/' + a.join());
         li
-          a(href='/index/#{elem}') #{elem.capitalize()}    
+          a(href='/index/#{uriPath}') #{elem.capitalize()}    
   
   div(class='row')
     div(class='col-md-2')
