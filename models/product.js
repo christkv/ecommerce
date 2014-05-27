@@ -18,6 +18,30 @@ var init = function(_db) {
     } 
   }
 
+  /**
+   * Create all needed indexes
+   */
+  Product.init = function(callback) {
+    // Ensure index on product id and salesrank
+    db.collection(collectionName).ensureIndex({category: 1, 'salesrank': -1}, {background:true}, function(err) {
+      if(err) return callback(err);
+
+      // Ensure index category and sales rank
+      db.collection(collectionName).ensureIndex({product_id: 1, 'salesrank': -1}, {background:true}, function(err) {
+        if(err) return callback(err);
+
+        // Ensure meta data index
+        db.collection(collectionName).ensureIndex({"metadata.key":1,"metadata.value":1}, function(err) {
+          if(err) return callback(err);
+          callback(null, null);    
+        });
+      });
+    });
+  }
+
+  /**
+   * Create a product entry
+   */
   Product.create = function(fields, callback) {
     var errors = {};
     // Fields cannot be empty
@@ -71,7 +95,10 @@ var init = function(_db) {
     });
   }
 
-  Product.findOne = function(id, callback) {
+  /**
+   * Find a Product by object id
+   */
+  Product.findOneById = function(id, callback) {
     id = typeof id == 'string' ? new ObjectID(id) : id;
 
     try {
@@ -84,6 +111,9 @@ var init = function(_db) {
     }
   }
 
+  /**
+   * Find all products allow for skipping and limiting
+   */
   Product.all = function(options, callback) {
     if(typeof options == 'function') {
       callback = options;
@@ -101,24 +131,9 @@ var init = function(_db) {
     });
   }
 
-  Product.init = function(callback) {
-    // Ensure index on product id and salesrank
-    db.collection(collectionName).ensureIndex({category: 1, 'salesrank': -1}, {background:true}, function(err) {
-      if(err) return callback(err);
-
-      // Ensure index category and sales rank
-      db.collection(collectionName).ensureIndex({product_id: 1, 'salesrank': -1}, {background:true}, function(err) {
-        if(err) return callback(err);
-
-        // Ensure meta data index
-        db.collection(collectionName).ensureIndex({"metadata.key":1,"metadata.value":1}, function(err) {
-          if(err) return callback(err);
-          callback(null, null);    
-        });
-      });
-    });
-  }
-
+  /**
+   * Find the top Products (sorted by salesrank) and allow limiting of results
+   */
   Product.topProducts = function(options, callback) {
     // Basic query
     var query = {};

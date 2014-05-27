@@ -205,7 +205,7 @@ var init = function(_db) {
     }
 
     // Fetch the product information
-    Product.findOne(productId, function(err, product) {
+    Product.findOneById(productId, function(err, product) {
       if(err) return callback(err);
 
       // First add the item to the cart

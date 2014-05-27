@@ -16,20 +16,9 @@ var init = function(_db) {
     } 
   }
 
-  Inventory.create = function(fields, callback) {
-    db.collection(collectionName).insert(fields, {w:1}, function(err, r) {
-      if(err) return callback(err);
-      callback(null, new Inventory(r[0]));
-    });
-  }
-
-  Inventory.findByProductId = function(id, callback) {
-    db.collection(collectionName).findOne({product_id: id}, function(err, r) {
-      if(err) return callback(err);
-      callback(null, new Inventory(r));
-    });    
-  }
-
+  /**
+   * Initialize all the indexes needed
+   */
   Inventory.init = function(callback) {
     // Ensure index on sales rank
     db.collection(collectionName).ensureIndex({product_id: 1}, {background:true}, function(err) {
@@ -43,6 +32,30 @@ var init = function(_db) {
     });
   }  
 
+  /**
+   * Create a new inventory entry
+   */
+  Inventory.create = function(fields, callback) {
+    db.collection(collectionName).insert(fields, {w:1}, function(err, r) {
+      if(err) return callback(err);
+      callback(null, new Inventory(r[0]));
+    });
+  }
+
+  /**
+   * Find a product by the object id
+   */
+  Inventory.findByProductId = function(id, callback) {
+    db.collection(collectionName).findOne({product_id: id}, function(err, r) {
+      if(err) return callback(err);
+      callback(null, new Inventory(r));
+    });    
+  }
+
+  /**
+   * Commit a card to the inventory, cleaning out the
+   * reserved items
+   */
   Inventory.commit = function(cartId, callback) {
     // Ensure we have correct types
     cartId = typeof cartId == 'string' ? new ObjectID(cartId) : cartId;
@@ -55,6 +68,9 @@ var init = function(_db) {
     }, {multi:true}, callback);
   }
 
+  /**
+   * Release a reservation for a product stored in a specific cart
+   */
   Inventory.release = function(productId, cartId, callback) {
     // Ensure we have correct types
     productId = typeof productId == 'string' ? new ObjectID(productId) : productId;
@@ -91,6 +107,9 @@ var init = function(_db) {
     });
   }
 
+  /**
+   * Update the quantity of a product in a cart
+   */
   Inventory.update = function(productId, cartId, quantity, delta, callback) {
     // Ensure we have correct types
     productId = typeof productId == 'string' ? new ObjectID(productId) : productId;
@@ -117,6 +136,9 @@ var init = function(_db) {
     });
   }
 
+  /**
+   * Reserve a specific amount of a product for a specific cart
+   */
   Inventory.reserve = function(productId, cartId, quantity, callback) {
     productId = typeof productId == 'string' ? new ObjectID(productId) : productId;
     cartId = typeof cartId == 'string' ? new ObjectID(cartId) : cartId;
