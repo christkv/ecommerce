@@ -8,7 +8,7 @@ var Product = require('../models/product')()
  */
 exports.product = function(req, res) {
   // Get the product and the category
-  Product.findOne(req.params.id, function(err, product) {
+  Product.findOneById(req.params.id, function(err, product) {
     if(err) throw err;
 
     // Locate the inventory

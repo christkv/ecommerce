@@ -18,6 +18,32 @@ var init = function(_db) {
     } 
   }
 
+  /**
+   * Create all needed indexes
+   */
+  Product.init = function(callback) {
+    // Ensure index on sales rank
+    db.collection(collectionName).ensureIndex({'salesrank': -1}, {background:true}, function(err) {
+      if(err) return callback(err);
+
+      // Ensure meta data index
+      db.collection(collectionName).ensureIndex({"metadata.key":1,"metadata.value":1}, function(err) {
+        if(err) return callback(err);
+
+        // Ensure text index on interesting fields
+        db.collection(collectionName).ensureIndex({
+          "$**": "text"
+        }, { background:true }, function(err) {
+          if(err) return callback(err);
+          callback(null, null);    
+        });
+      });
+    });
+  }
+
+  /**
+   * Create a product entry
+   */
   Product.create = function(fields, callback) {
     var errors = {};
     console.dir(fields)
@@ -72,7 +98,10 @@ var init = function(_db) {
     });
   }
 
-  Product.findOne = function(id, callback) {
+  /**
+   * Find a Product by object id
+   */
+  Product.findOneById = function(id, callback) {
     try {
       db.collection(collectionName).findOne(new ObjectID(id), function(err, p) {
         if(err) return callback(err, null);
@@ -83,6 +112,9 @@ var init = function(_db) {
     }
   }
 
+  /**
+   * Find all products allow for skipping and limiting
+   */
   Product.all = function(options, callback) {
     if(typeof options == 'function') {
       callback = options;
@@ -100,26 +132,9 @@ var init = function(_db) {
     });
   }
 
-  Product.init = function(callback) {
-    // Ensure index on sales rank
-    db.collection(collectionName).ensureIndex({'salesrank': -1}, {background:true}, function(err) {
-      if(err) return callback(err);
-
-      // Ensure meta data index
-      db.collection(collectionName).ensureIndex({"metadata.key":1,"metadata.value":1}, function(err) {
-        if(err) return callback(err);
-
-        // Ensure text index on interesting fields
-        db.collection(collectionName).ensureIndex({
-          "$**": "text"
-        }, { background:true }, function(err) {
-          if(err) return callback(err);
-          callback(null, null);    
-        });
-      });
-    });
-  }
-
+  /**
+   * Find the top Products (sorted by salesrank) and allow limiting of results
+   */
   Product.topProducts = function(options, callback) {
     // Basic query
     var query = {};
