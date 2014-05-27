@@ -26,15 +26,10 @@ var init = function(_db) {
     db.collection(collectionName).ensureIndex({category: 1, 'salesrank': -1}, {background:true}, function(err) {
       if(err) return callback(err);
 
-      // Ensure index category and sales rank
-      db.collection(collectionName).ensureIndex({product_id: 1, 'salesrank': -1}, {background:true}, function(err) {
+      // Ensure meta data index
+      db.collection(collectionName).ensureIndex({"metadata.key":1,"metadata.value":1}, function(err) {
         if(err) return callback(err);
-
-        // Ensure meta data index
-        db.collection(collectionName).ensureIndex({"metadata.key":1,"metadata.value":1}, function(err) {
-          if(err) return callback(err);
-          callback(null, null);    
-        });
+        callback(null, null);    
       });
     });
   }
