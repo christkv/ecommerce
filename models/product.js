@@ -134,7 +134,7 @@ var init = function(_db) {
     // Limit
     var limit = options.limit || 10;
     if(options.category && options.category != '/') {
-      query.category = new RegExp(f("^%s", options.category), "i");
+      query.category = new RegExp(f("^%s", options.category));
     }
 
     // Get the 10 most popular products
