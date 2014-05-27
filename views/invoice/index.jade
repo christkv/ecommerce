@@ -1,0 +1,58 @@
+extends ../single_page
+
+block main
+  div(class='container')
+    h1 
+      = 'Invoice'
+    hr
+    div(class='row')
+      div(class='col-md-6')
+        div(class='panel panel-default')
+          div(class='panel-body') 
+            div(class='form-group')
+              label(class='control-label') Shipped to
+              p(class='lead') #{invoice.shipped_to.name}
+
+              label(class='control-label') Address
+              p(class='lead') #{invoice.shipped_to.address}
+
+      div(class='col-md-6')
+        div(class='panel panel-default')
+          div(class='panel-body') 
+            div(class='form-group')
+              label(class='control-label') Name on credit card
+              p(class='lead') #{invoice.payment.name}
+
+              label(class='control-label') Credit card number
+              p(class='lead') #{invoice.payment.number}
+
+    div(class='row')
+      div(class='col-md-12')
+        - var total = 0
+        table(class='table table-striped')
+          thead
+            th Item name
+            th Quantity
+            th Price
+            tbody
+              each item in invoice.items
+                tr
+                  td
+                    = item.title
+                  td
+                    = item.quantity
+                  td
+                    - total += item.price * item.quantity
+                    = (item.price * item.quantity) / 100
+                    = " USD "
+              tr
+                td
+                  strong= "Total"
+                td                
+                td
+                  = total / 100
+                  = " USD "
+    div(class='row')
+      div(class='col-md-10')
+        a(href='/' value='pay', class='btn btn-success') Close
+      div(class='col-md-2')

@@ -1,0 +1,66 @@
+extends ../single_page
+
+block main
+  div(class='container')
+    h1 
+      = 'Checkout'
+    hr
+    div(class='row')
+      div(class='col-md-12')
+        - var total = 0
+        table(class='table table-striped')
+          thead
+            th Item name
+            th Quantity
+            th Price
+            tbody
+              each item in cart.items
+                tr
+                  td
+                    = item.title
+                  td
+                    = item.quantity
+                  td
+                    - total += item.price * item.quantity
+                    = (item.price * item.quantity) / 100
+                    = " USD "
+              tr
+                td
+                  strong= "Total"
+                td                
+                td
+                  = total / 100
+                  = " USD "
+
+    if cart.items.length > 0
+      form(action="/cart/pay", method="post")
+        div(class='row')
+          div(class='col-md-6')
+            div(class='panel panel-default')
+              div(class='panel-body') 
+                - var field = 'name';
+                div(class='form-group #{errors && errors[field] ? "has-error": ""}')
+                  label(for='#{field}', class='control-label') #{field.capitalize()} #{errors && errors[field] ? "(" + errors[field] + ")" : ""}
+                  input(type='text', rows=5, class='form-control', name='#{field}', id='#{field}', placeholder='Enter recipient #{field}', value='#{fields && fields[field] ? fields[field] : ""}')
+                - var field = 'address';
+                div(class='form-group #{errors && errors[field] ? "has-error": ""}')
+                  label(for='#{field}', class='control-label') #{field.capitalize()} #{errors && errors[field] ? "(" + errors[field] + ")" : ""}
+                  textarea(type='text', rows=5, class='form-control', name='#{field}', id='#{field}', placeholder='Enter shipping #{field}', value='#{fields && fields[field] ? fields[field] : ""}')
+
+          div(class='col-md-6')
+            div(class='panel panel-default')
+              div(class='panel-body') 
+                - var field = 'creditcard_name';
+                - var title = 'Name on credit card';
+                div(class='form-group #{errors && errors[field] ? "has-error": ""}')
+                  label(for='#{field}', class='control-label') #{title.capitalize()} #{errors && errors[field] ? "(" + errors[field] + ")" : ""}
+                  input(type='text', rows=5, class='form-control', name='#{field}', id='#{field}', placeholder='Enter shipping #{field}', value='#{fields && fields[field] ? fields[field] : ""}')
+                - var field = 'creditcard';
+                - var title = 'creditcard number';
+                div(class='form-group #{errors && errors[field] ? "has-error": ""}')
+                  label(for='#{field}', class='control-label') #{title.capitalize()} #{errors && errors[field] ? "(" + errors[field] + ")" : ""}
+                  input(type='number', rows=5, class='form-control', name='#{field}', id='#{field}', placeholder='Enter shipping #{field}', value='#{fields && fields[field] ? fields[field] : ""}')
+        div(class='row')
+          div(class='col-md-10')
+            button(type='submit', value='pay', class='btn btn-success') Pay
+          div(class='col-md-2')

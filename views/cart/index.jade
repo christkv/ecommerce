@@ -39,8 +39,9 @@ block main
                     = " USD "
                   td(align='right')               
                     button(type='submit', value='update', class='btn btn-default') Update
-    form(action="/cart/checkout", method="post")
-      div(class='row')
-        div(class='col-md-10')
-          button(type='submit', value='checkout', class='btn btn-success') Checkout
-        div(class='col-md-2')
+    if cart.items.length > 0
+      form(action="/cart/checkout", method="post")
+        div(class='row')
+          div(class='col-md-10')
+            button(type='submit', value='checkout', class='btn btn-success') Checkout
+          div(class='col-md-2')

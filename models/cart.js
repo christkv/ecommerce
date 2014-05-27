@@ -22,8 +22,6 @@ var init = function(_db) {
    * Initialize the model at application startup
    */
   Cart.init = function(callback) {
-    
-    
     callback();
   }
 
@@ -248,6 +246,23 @@ var init = function(_db) {
         });
       });      
     });
+  }
+
+  /**
+   * Commit all the changes to the inventory
+   */
+  Cart.prototype.commit = function(callback) {
+    var self = this;
+    // Set the cart to completed
+    db.collection(collectionName).update({
+      _id: this._id
+    }, { 
+      $set: { status: 'completed', modified_on: new Date() }
+    }, function(err, r) {
+      if(err) return callback(err);
+      // Remove all the items from the inventory
+      Inventory.commit(self._id, callback);
+    })
   }
 
   return Cart;

@@ -1,5 +1,8 @@
 var Cart = require('../models/cart')()
-  , product_routes = require('./products');
+  , Inventory = require('../models/inventory')()
+  , Invoice = require('../models/invoice')()
+  , product_routes = require('./products')
+  , invoice_routes = require('./invoice');
 
 /*
  * List all Items in the Cart
@@ -143,16 +146,53 @@ exports.checkout = function checkout(req, res) {
   createOrRetrieveCart(req.session.cartId, function(err, cart) {
     if(err) throw err;
 
-    // Remove product from cart
-    cart.remove(id, function(err, r) {
-      if(err) {
-        req.params.error = err;
-      }
-
-      exports.index(req, res); 
-    })
+    // Render the checkout list
+    res.render('./cart/checkout', { 
+        cart: cart
+      , errors: req.params.errors
+    });
   });  
 }
+
+/*
+ * Cart Fake Payment
+ */
+exports.pay = function checkout(req, res) {
+  // Get a cart
+  createOrRetrieveCart(req.session.cartId, function(err, cart) {
+    if(err) throw err;
+      
+    // Get fields
+    var fields = {
+        items: cart.items
+      , name: req.body.name
+      , address: req.body.address
+      , creditcard_name: req.body.creditcard_name
+      , creditcard: req.body.creditcard
+    }
+
+    // Attempt to create an invoice
+    Invoice.create(fields, function(err, invoice) {
+      if(err) {
+        console.log("======================================= errors")
+        console.dir(err)
+        req.params.errors = err;
+        return exports.checkout(req, res);
+      }
+
+      // Commit inventory
+      cart.commit(function(err) {
+        if(err) throw err;
+        console.dir(invoice)
+        // Add the invoice id
+        req.params.id = invoice._id.toString();
+        // Render invoice view
+        invoice_routes.index(req, res);
+      });
+    });
+  });  
+}
+
 
 
 

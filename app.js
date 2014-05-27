@@ -6,6 +6,7 @@ var routes = require('./routes');
 var category_routes = require('./routes/categories');
 var product_routes = require('./routes/products');
 var cart_routes = require('./routes/carts');
+var invoice_routes = require('./routes/invoice');
 var http = require('http');
 var path = require('path');
 
@@ -81,6 +82,10 @@ MongoClient.connect("mongodb://localhost:27017/ecommerce", function(err, db) {
   app.post('/cart/update', cart_routes.update);
   app.get('/cart/remove/:id', cart_routes.remove);
   app.post('/cart/checkout', cart_routes.checkout);
+  app.post('/cart/pay', cart_routes.pay);
+
+  // Invoice
+  app.get('/invoice/:id', invoice_routes.index);
 
   // Initialize all the models
   initializeModels(db, ['./models/category'

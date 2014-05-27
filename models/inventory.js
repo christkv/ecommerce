@@ -34,8 +34,25 @@ var init = function(_db) {
     // Ensure index on sales rank
     db.collection(collectionName).ensureIndex({product_id: 1}, {background:true}, function(err) {
       if(err) return callback(err);
-      callback(null, null);
+
+      // Ensure index on sales rank
+      db.collection(collectionName).ensureIndex({'reserved.cart_id': 1}, {background:true}, function(err) {
+        if(err) return callback(err);
+        callback(null, null);
+      });
     });
+  }  
+
+  Inventory.commit = function(cartId, callback) {
+    // Ensure we have correct types
+    cartId = typeof cartId == 'string' ? new ObjectID(cartId) : cartId;
+
+    // Remove all entries for the cart
+    db.collection(collectionName).update({
+      "reserved.cart_id": cartId
+    }, {
+      $pull: {reserved: { cart_id: cartId }}
+    }, {multi:true}, callback);
   }
 
   Inventory.release = function(productId, cartId, callback) {
