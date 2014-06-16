@@ -174,8 +174,6 @@ exports.pay = function checkout(req, res) {
     // Attempt to create an invoice
     Invoice.create(fields, function(err, invoice) {
       if(err) {
-        console.log("======================================= errors")
-        console.dir(err)
         req.params.errors = err;
         return exports.checkout(req, res);
       }
