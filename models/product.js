@@ -155,6 +155,27 @@ var init = function(_db) {
     });
   }  
 
+  /**
+   * Remove a product using the id
+   */
+  Product.remove = function(id, callback) {
+    var _id = null;
+
+    // Try to create an ObjectId instance
+    try {
+      _id = new ObjectID(id);      
+    } catch(err) {
+      return callback(err);
+    }
+
+    // Get the 10 most popular products
+    db.collection(collectionName)
+      .remove({_id: _id}, function(err) {
+        if(err) return callback(err);
+        callback(null, null);
+    });    
+  }
+
   return Product;
 }
 
