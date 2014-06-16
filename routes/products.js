@@ -56,6 +56,11 @@ exports.index = function(req, res) {
 }
 
 exports.remove = function(req, res) {
+  Product.remove(req.body.id, function(err, result) {
+    if(err) throw err;
+    // Render the product list
+    exports.index(req, res);
+  });
 }
 
 exports.add = function(req, res) {
