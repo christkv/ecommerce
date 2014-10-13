@@ -38,7 +38,7 @@ var init = function(_db) {
   Inventory.create = function(fields, callback) {
     db.collection(collectionName).insert(fields, {w:1}, function(err, r) {
       if(err) return callback(err);
-      callback(null, new Inventory(r[0]));
+      callback(null, new Inventory(r.ops[0]));
     });
   }
 

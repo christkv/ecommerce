@@ -71,9 +71,9 @@ var init = function(_db) {
       }
       // Total price of order
       , total: total
-    }, function(err, docs) {
+    }, function(err, result) {
       if(err) return callback(err);
-      return callback(null, new Invoice(docs[0]));
+      return callback(null, new Invoice(result.ops[0]));
     });
   }
 

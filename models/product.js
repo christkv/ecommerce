@@ -84,10 +84,10 @@ var init = function(_db) {
             , height: 160
           }
         }
-      }, {w:1}, function(err, doc) {
+      }, {w:1}, function(err, result) {
         if(err) throw err;
         // Create an inventory entry for the new product
-        Inventory.create({product_id: doc[0]._id, available: parseInt(fields.inventory, 10)}, function(err, result) {
+        Inventory.create({product_id: result.ops[0]._id, available: parseInt(fields.inventory, 10)}, function(err, result) {
           if(err) throw err;
           callback(null, null);
         });

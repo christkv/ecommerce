@@ -181,7 +181,6 @@ exports.pay = function checkout(req, res) {
       // Commit inventory
       cart.commit(function(err) {
         if(err) throw err;
-        console.dir(invoice)
         // Add the invoice id
         req.params.id = invoice._id.toString();
         // Render invoice view

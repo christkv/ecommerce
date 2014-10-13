@@ -34,9 +34,9 @@ var init = function(_db) {
       , items: []
       , created_on: new Date()
       , modified_on: new Date()
-    }, function(err, doc) {
+    }, function(err, result) {
       if(err) return callback(err);
-      callback(null, new Cart(doc[0]));
+      callback(null, new Cart(result.ops[0]));
     });
   }
 
