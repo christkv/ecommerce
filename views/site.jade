@@ -12,7 +12,7 @@ block content
       - var a = [];
       each elem in path.root.split()
         - a.push(elem);
-        - var uriPath = encodeURIComponent('/' + a.join());
+        - var uriPath = encodeURIComponent('/' + a.join('/'));
         li
           a(href='/index/#{uriPath}') #{elem.capitalize()}    
   
